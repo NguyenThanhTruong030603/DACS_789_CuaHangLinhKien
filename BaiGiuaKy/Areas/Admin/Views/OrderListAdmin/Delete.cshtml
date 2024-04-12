@@ -1,0 +1,9 @@
+﻿@model BaiGiuaKy.Models.Order
+
+<h2>Delete Order</h2>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <p>Are you sure you want to delete @Model.Id?</p>
+    <button type="submit" class="btn btn-danger">Delete</button>
+</form>

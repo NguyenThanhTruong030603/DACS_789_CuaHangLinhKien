@@ -1,0 +1,46 @@
+﻿@model IEnumerable<BaiGiuaKy.Models.Category>
+
+
+    <div class="card-header">
+        <h3 class="card-title">Danh Sách Loại Sản Phẩm</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+      
+<table class="table">
+    <p>
+                <a asp-action="Add">Thêm Loại Sản Phẩm</a>
+    </p>
+            <table id="example1" class="table table-bordered table-striped">
+    
+    <thead>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                        <td>
+                            @category.Name
+                        </td>
+ 
+                <td>
+                            <a asp-action="Display" asp-route-id="@category.Id" class="btn btn-primary"><i class="fa fa-eye"></i>View</a> |
+                            <a asp-action="Update" asp-route-id="@category.Id" class="btn btn-secondary"><i class="fa fa-pencil"></i>Edit</a> |
+                            <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger"><i class="fa fa-trash"></i>Delete</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+</div>
+
+
+

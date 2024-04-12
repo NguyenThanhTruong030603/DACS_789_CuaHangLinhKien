@@ -1,0 +1,60 @@
+﻿@page
+@model LoginModel
+
+@{
+	ViewData["Title"] = "Đăng nhập";
+}
+
+
+<div class="">
+	<div class="" style="width: 400px; margin-left: 440px">
+		<section>
+			<form id="account" method="post">
+
+				<h2 style="margin-left: 120px">@ViewData["Title"]</h2>
+				<div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+
+
+				<div class="form-floating mb-4">
+					<input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+					<label asp-for="Input.Email">Email</label>
+					<span asp-validation-for="Input.Email" class="text-danger"></span>
+				</div>
+
+				<div class="form-floating mb-3">
+					<input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+					<label asp-for="Input.Password" class="form-label">Password</label>
+					<span asp-validation-for="Input.Password" class="text-danger"></span>
+				</div>
+
+				<div class="row mb-4">
+					<div class="col d-flex justify-content-center">
+						<!-- Checkbox -->
+						<div class="form-check">
+							<label asp-for="Input.RememberMe" class="form-label">
+								<input class="form-check-input" asp-for="Input.RememberMe" />
+								@Html.DisplayNameFor(m => m.Input.RememberMe)
+							</label>
+						</div>
+					</div>
+
+					<div class="col">
+						<!-- Simple link -->
+						<a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+					</div>
+				</div>
+
+				<button id="login-submit" type="submit" class="btn btn-primary btn-block mb-4" style="margin-left: 150px">Sign in</button>
+
+				<div class="text-center">
+					<p>Not a member? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register</a></p>
+				</div>
+			</form>
+		</section>
+	</div>
+</div>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

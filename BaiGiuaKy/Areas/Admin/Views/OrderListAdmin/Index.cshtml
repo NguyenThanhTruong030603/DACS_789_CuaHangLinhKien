@@ -1,0 +1,48 @@
+﻿@model IEnumerable<BaiGiuaKy.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+    decimal total = 0;
+}
+<div class="card-header">
+    <h3 class="card-title">Danh Sách Đơn Hàng</h3>
+</div>
+<!-- /.card-header -->
+<div class="card-body">
+
+    <table class="table">
+        
+        <table id="example1" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>TotalPrice</th>
+            <th>ShippingAddress</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                        <td>@order.OrderDate</td>
+                        <td>@order.TotalPrice</td>
+                        <td>@order.ShippingAddress</td>
+                        <td>@order.Notes</td>
+                <td>
+                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@order.Id">Delete</a>
+                </td>
+            </tr>
+                    total = total + order.TotalPrice;
+        }
+    </tbody>
+</div>
+
+        
+
+<div class="card-body">
+    <h5 class="btn btn-block btn-lg" style="width: 100%; cursor: default; background-color: #ffc107;">
+        Tổng tiền:
+        <span style="font-weight: bold; color: #dc3545;">@total</span> VNĐ
+    </h5>
+</div>

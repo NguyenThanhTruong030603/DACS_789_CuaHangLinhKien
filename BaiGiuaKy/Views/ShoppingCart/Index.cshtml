@@ -1,0 +1,34 @@
+﻿@model ShoppingCart
+
+<h2 class="text-center my-4">Giỏ hàng của bạn</h2>
+
+<div class="container">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Sản phẩm</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Giá </th>
+                    <th scope="col">Tổng cộng</th>
+                    <th scope="col">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price USD</td>
+                        <td>@(item.Price * item.Quantity) USD</td>
+                        <td>
+                            <a class="btn btn-outline-danger" asp-action="RemoveFromCart" asp-route-productId="@item.ProductId">Xóa</a>
+                            <a class="btn btn-outline-primary" asp-controller="ShoppingCart" asp-action="Checkout">Thanh toán</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

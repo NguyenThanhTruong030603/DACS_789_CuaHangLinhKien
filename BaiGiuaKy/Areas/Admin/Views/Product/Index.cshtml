@@ -1,0 +1,55 @@
+﻿@model IEnumerable<BaiGiuaKy.Models.Product>
+
+
+
+    <div class="card-header">
+        <h3 class="card-title">Danh Sách Sản Phẩm</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+      
+<table class="table">
+    <p>
+                <a asp-action="Add">Thêm Sản Phẩm</a>
+    </p>
+            <table id="example1" class="table table-bordered table-striped">
+    
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.Price</td>
+                <td>@product.Description</td>
+
+
+                <td>
+                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        <img src="@product.ImageUrl" alt="Product Image" style="max-width: 200px;" />
+                    }
+                </td>
+
+                <td>@(product.Category != null ? product.Category.Name : "No Category")</td>
+
+                <td>
+                    <a asp-action="Display" asp-route-id="@product.Id" class="btn btn-primary"><i class="fa fa-eye"></i>View</a> |
+                            <a asp-action="Update" asp-route-id="@product.Id" class="btn btn-secondary"><i class="fa fa-pencil"></i>Edit</a> |
+                            <a asp-action="Delete" asp-route-id="@product.Id" class="btn btn-danger"><i class="fa fa-trash"></i>Delete</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>

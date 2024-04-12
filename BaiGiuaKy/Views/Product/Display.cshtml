@@ -1,0 +1,30 @@
+﻿@model BaiGiuaKy.Models.Product
+
+<h2>Chi tiết sản phẩm</h2>
+<h2>@Model.Name</h2>
+
+<div class="container" style="">
+
+    <div style="border-top: 1px solid #333; margin: 15px 0"></div>
+
+    <div style="display: flex;  justify-content: space-between">
+        <div class="left-detail" style="flex-direction: column; flex:1">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="Product Image" style="max-width: 700px; display:block" />
+            }
+
+            <a class="btn btn-primary" asp-action="Update" asp-route-id="@Model.Id">Chỉnh sửa</a>
+            <a class="btn btn-primary" asp-action="Index">Quay lại danh sách</a>
+
+        </div>
+
+        <div class="right-detail">
+            <h3>Price: @Model.Price</h3>
+            <p>@Model.Description</p>
+            <p>@Model.Category</p>
+        </div>
+    </div>
+
+</div>
+
