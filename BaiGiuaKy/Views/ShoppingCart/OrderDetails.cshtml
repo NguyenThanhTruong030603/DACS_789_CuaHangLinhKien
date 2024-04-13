@@ -1,0 +1,35 @@
+﻿@model BaiGiuaKy.Models.Order
+
+<h2>Đơn hàng của bạn</h2>
+
+<h2>Order Details - @Model.Id</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var detail in Model.OrderDetails)
+        {
+            <tr>
+                <td>@detail.Product.Name</td>
+                <td>@detail.Quantity</td>
+                <td>@detail.Price.ToString("C")</td>
+                <td>@detail.Price</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <h3>Total: @Model.TotalPrice.ToString("C")</h3>
+</div>
+
+<div>
+    <!-- Các tùy chọn khác như reorder, in đơn hàng, v.v... -->
+</div>

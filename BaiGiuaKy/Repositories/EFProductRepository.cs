@@ -48,6 +48,11 @@ namespace BaiGiuaKy.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<List<Product>> SearchAsync(string searchString)
+        {
+            return await _context.Products.Where(p => p.Name.Contains(searchString)).ToListAsync();
+        }
+
     }
 
 }
