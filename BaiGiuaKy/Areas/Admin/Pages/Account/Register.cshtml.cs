@@ -140,6 +140,7 @@ namespace BaiGiuaKy.Areas.Admin.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -179,10 +180,11 @@ namespace BaiGiuaKy.Areas.Admin.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        TempData["SuccessMessage"] = "Đã tạo tài khoản thành công!";
+                        return Redirect("/admin");
                     }
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);

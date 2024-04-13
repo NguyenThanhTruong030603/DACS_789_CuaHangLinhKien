@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
+    
     <div class="wrapper">
 
         <!-- Preloader -->
@@ -210,7 +211,12 @@
                         </div>
                     </div>
                 </div>
-
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success" role="alert">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -256,6 +262,16 @@
                         </li>
 
                         <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="nav-link">
+                                <i class="nav-icon fas fa-th"></i>
+                                <p>
+                                    Danh Sách Tài Khoản
+
+                                </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a  href="/Admin/Account/Register" class="nav-link">
                                 <i class="nav-icon fas fa-th"></i>
                                 <p>
@@ -264,6 +280,8 @@
                                 </p>
                             </a>
                         </li>
+
+                        
                        
                         
                     </ul>

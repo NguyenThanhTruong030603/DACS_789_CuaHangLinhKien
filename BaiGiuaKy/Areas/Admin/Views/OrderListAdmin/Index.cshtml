@@ -29,9 +29,7 @@
                         <td>@order.TotalPrice</td>
                         <td>@order.ShippingAddress</td>
                         <td>@order.Notes</td>
-                <td>
-                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@order.Id">Delete</a>
-                </td>
+                
             </tr>
                     total = total + order.TotalPrice;
         }

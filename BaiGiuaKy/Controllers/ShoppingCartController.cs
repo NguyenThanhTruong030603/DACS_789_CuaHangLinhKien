@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BaiGiuaKy.Controllers
 {
     [Authorize]
+    [Authorize(Roles = SD.Role_Customer)]
     public class ShoppingCartController : Controller
     {
 
