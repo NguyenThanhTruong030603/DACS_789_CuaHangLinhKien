@@ -3,6 +3,7 @@ using BaiGiuaKy.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using X.PagedList;
 
 namespace BaiGiuaKy.Areas.Admin.Controllers
 {
@@ -22,10 +23,17 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
         }
 
         // Hiển thị danh sách sản phẩm
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
+            ViewData["Title"] = "Trang Chủ";
+
             var products = await _productRepository.GetAllAsync();
-            return View(products);
+
+
+
+            int pageSize = 4;
+            int pageNumber = (page ?? 1);
+            return View(await products.ToPagedListAsync(pageNumber, pageSize));
         }
         // Hiển thị form thêm sản phẩm mới
         public async Task<IActionResult> Add()
@@ -151,6 +159,22 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
         {
             await _productRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Search(string searchString, int? page)
+        {
+            ViewData["Title"] = "Tìm kiếm";
+
+            var products = await _productRepository.GetAllAsync();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(p => p.Name.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            int pageSize = 4;
+            int pageNumber = (page ?? 1);
+            return View("Index", await products.ToPagedListAsync(pageNumber, pageSize));
         }
     }
 }

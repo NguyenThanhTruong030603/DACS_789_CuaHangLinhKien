@@ -33,5 +33,12 @@ namespace BaiGiuaKy.Repositories
             _context.Orders.Remove(Order);
             await _context.SaveChangesAsync();
         }
+        public async Task<List<Order>> SearchAsync(string searchString)
+        {
+            string searchStr = searchString.ToString(); // Convert searchString to string
+            return await _context.Orders
+                .Where(p => p.Id.ToString().StartsWith(searchStr))
+                .ToListAsync();
+        }
     }
 }

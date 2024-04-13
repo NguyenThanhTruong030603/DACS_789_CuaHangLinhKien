@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = SD.Role_Admin )]
+    [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
     public class UsersController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -26,6 +26,7 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = SD.Role_Admin)]
         public async Task<IActionResult> ResetPassword(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);

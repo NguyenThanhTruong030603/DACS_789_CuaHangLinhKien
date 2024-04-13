@@ -9,5 +9,6 @@ namespace BaiGiuaKy.Repositories
 
         Task<Order> GetByIdAsync(int id);
         Task DeleteAsync(int id);
+        Task<List<Order>> SearchAsync(string searchString);
     }
 }
