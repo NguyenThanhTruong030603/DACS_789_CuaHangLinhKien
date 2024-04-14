@@ -1,15 +1,19 @@
-﻿@model List<ApplicationUser>
+﻿@model X.PagedList.IPagedList<ApplicationUser>
 
+@using (Html.BeginForm("Search", "Users", FormMethod.Get))
+{
+    <p>
+        <div style="text-align: right;">
+            Tìm kiếm: <input type="text" name="searchString" />
+            <input type="submit" value="Tìm kiếm" class="btn btn-primary">
+        </div>
+    </p>
 
-
-<div class="card-header">
-    <h3 class="card-title">Danh Sách Tài Khoản</h3>
-</div>
-<!-- /.card-header -->
-<div class="card-body">
-
-    <table class="table">
-
+    <div class="card-header">
+        <h3 class="card-title">Danh Sách Tài Khoản</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
         <table id="example1" class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -28,11 +32,41 @@
                             <form asp-controller="Users" asp-action="ResetPassword" asp-route-userId="@user.Id" method="post">
                                 <button type="submit">Reset Password</button>
                             </form>
-
                         </td>
                     </tr>
-                } 
-                
+                }
             </tbody>
-</div>
+        </table>
+    </div>
 
+    <div class="container">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                @if (Model.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">Đầu</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@(Model.PageNumber - 1)">Trước</a>
+                    </li>
+                }
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="?page=@i">@i</a>
+                    </li>
+                }
+                @if (Model.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@(Model.PageNumber + 1)">Tiếp</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@Model.PageCount">Cuối</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}

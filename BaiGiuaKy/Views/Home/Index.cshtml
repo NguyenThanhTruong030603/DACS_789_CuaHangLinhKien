@@ -1,22 +1,28 @@
 ﻿@model X.PagedList.IPagedList<BaiGiuaKy.Models.Product>
 
+
+@* <!-- Include jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include jQuery UI library -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script> *@
 @{
     ViewData["Title"] = "Trang Chủ";
     int numOfQuantity = 1;
 }
 
 <h1 class="text-center my-4">Sản Phẩm</h1>
+<
 @using (Html.BeginForm("Search", "Home", FormMethod.Get))
 {
     <p>
         <div style="text-align: right;">
-            Tìm kiếm: <input type="text" name="searchString" />
+            Tìm kiếm: <input type="text" id="searchInput" name="searchString" />
             <input type="submit" value="Tìm kiếm" class="btn btn-primary">
         </div>
     </p>
 }
 
-<section class="py-5">
+<section  class="py-5">
     <div class="container">
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
             @foreach (var item in Model)
@@ -74,3 +80,26 @@
         </ul>
     </nav>
 </div>
+
+
+
+@* <script>
+    $(document).ready(function () {
+        $('#searchInput').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Home/SearchAutocomplete',
+                    dataType: 'json',
+                    data: { term: request.term },
+                    success: function (data) {
+                        response(data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Lỗi khi gọi phương thức SearchAutocomplete:', error);
+                    }
+                });
+            },
+            minLength: 2 // Số ký tự tối thiểu trước khi autocomplete kích hoạt
+        });
+    });
+</script> *@

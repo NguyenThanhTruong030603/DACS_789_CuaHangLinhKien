@@ -142,6 +142,7 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
         }
 
         // Hiển thị form xác nhận xóa sản phẩm
+        [Authorize(Roles = SD.Role_Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
@@ -165,6 +166,9 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
         {
             ViewData["Title"] = "Tìm kiếm";
 
+            // Retrieve the search string from TempData if available
+            searchString = searchString ?? TempData["SearchString"] as string;
+
             var products = await _productRepository.GetAllAsync();
 
             if (!string.IsNullOrEmpty(searchString))
@@ -174,6 +178,10 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
 
             int pageSize = 4;
             int pageNumber = (page ?? 1);
+
+            // Store the search string in TempData for subsequent requests
+            TempData["SearchString"] = searchString;
+
             return View("Index", await products.ToPagedListAsync(pageNumber, pageSize));
         }
     }

@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using X.PagedList;
+using static NuGet.Packaging.PackagingConstants;
 
 namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
 {
@@ -19,10 +21,13 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
             var users = await _userManager.Users.ToListAsync();
-            return View(users);
+
+            int pageSize = 4;
+            int pageNumber = (page ?? 1);
+            return View(await users.ToPagedListAsync(pageNumber, pageSize));
         }
 
         [HttpPost]
@@ -50,6 +55,31 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
                 // You can handle the failure scenario accordingly
                 return BadRequest("Password reset failed.");
             }
+        }
+        public async Task<IActionResult> Search(string searchString, int? page)
+        {
+            ViewData["Title"] = "Tìm kiếm";
+
+            // Lấy chuỗi tìm kiếm từ TempData nếu có
+            searchString = searchString ?? TempData["SearchString"] as string;
+
+            // Lấy danh sách người dùng từ UserManager
+            var users = await _userManager.Users.ToListAsync();
+
+            // Lọc danh sách người dùng dựa trên chuỗi tìm kiếm (nếu có)
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(u => u.Email.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            }
+
+            int pageSize = 4;
+            int pageNumber = page ?? 1;
+
+            // Lưu chuỗi tìm kiếm trong TempData để sử dụng cho các request sau
+            TempData["SearchString"] = searchString;
+
+            // Trả về view "Index" với danh sách người dùng đã lọc và phân trang
+            return View("Index", await users.ToPagedListAsync(pageNumber, pageSize));
         }
 
     }
