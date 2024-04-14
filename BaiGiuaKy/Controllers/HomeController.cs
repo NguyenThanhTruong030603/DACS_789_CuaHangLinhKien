@@ -14,12 +14,22 @@ namespace BaiGiuaKy.Controllers
     public class HomeController : Controller
     {
         private readonly IProductRepository _productRepository;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(IProductRepository productRepository)
+        public HomeController(IProductRepository productRepository, ApplicationDbContext context)
         {
             _productRepository = productRepository;
+            _context = context;
         }
-
+        [HttpGet]
+        public IActionResult AutocompleteSearch(string term)
+        {
+            var product = _context.Products
+                .Where(c => c.Name.Contains(term))
+                .Select(c => c.Name)
+                .ToList();
+            return Ok(product);
+        }
         public async Task<IActionResult> Index( int? page)
         {
             ViewData["Title"] = "Trang Ch?";
@@ -33,30 +43,7 @@ namespace BaiGiuaKy.Controllers
             return View(await products.ToPagedListAsync(pageNumber, pageSize));
         }
 
-        //[AllowAnonymous]
-        //[HttpGet]
-        //public async Task<IActionResult> SearchAutocomplete(string term)
-        //{
-        //    try
-        //    {
-        //        var products = await _productRepository.GetAllAsync();
-        //        var suggestions = products
-        //            .Where(p => p.Name.Contains(term, StringComparison.OrdinalIgnoreCase))
-        //            .Select(p => p.Name)
-        //            .Distinct()
-        //            .Take(10) // Limit suggestions to improve performance
-        //            .ToList();
-
-        //        return Json(suggestions);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the error
-        //        Debug.WriteLine("Error retrieving autocomplete suggestions: " + ex.Message);
-        //        return BadRequest("Error retrieving autocomplete suggestions.");
-        //    }
-        //}
-        // Hi?n th? thông tin chi ti?t s?n ph?m
+      
         [AllowAnonymous]
         public async Task<IActionResult> Display(int id)
         {

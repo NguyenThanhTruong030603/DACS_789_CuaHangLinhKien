@@ -27,9 +27,11 @@
 </table>
 
 <div>
-    <h3>Total: @Model.TotalPrice.ToString("C")</h3>
+    <h3>Tỏng cộng: @Model.TotalPrice.ToString("C")</h3>
 </div>
-
+<div class="card-footer text-muted text-center">
+    <a asp-action="OrderList" class="btn btn-outline-primary">Quay lại </a>
+</div>
 <div>
     <!-- Các tùy chọn khác như reorder, in đơn hàng, v.v... -->
 </div>
