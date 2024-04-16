@@ -1,5 +1,17 @@
 ﻿@model X.PagedList.IPagedList<BaiGiuaKy.Models.Category>
-
+@section Scripts
+{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $("#autocomplete").autocomplete({
+                source: '/Admin/Category/AutocompleteSearch'
+            });
+        });
+    </script>
+}
 
 
 <h1 class="text-center my-4">Loại Sản Phẩm</h1>
@@ -7,7 +19,7 @@
 {
     <p>
         <div style="text-align: right;">
-            Tìm kiếm: <input type="text" name="searchString" />
+            Tìm kiếm: <input type="text" id="autocomplete" name="searchString" />
             <input type="submit" value="Tìm kiếm" class="btn btn-primary">
         </div>
     </p>

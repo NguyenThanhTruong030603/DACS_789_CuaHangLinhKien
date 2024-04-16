@@ -20,7 +20,15 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
         {
             _userManager = userManager;
         }
-
+        [HttpGet]
+        public IActionResult AutocompleteSearch(string term)
+        {
+            var user = _userManager.Users
+                .Where(c => c.Email.Contains(term))
+                .Select(c => c.Email)
+                .ToList();
+            return Ok(user);
+        }
         public async Task<IActionResult> Index(int? page)
         {
             var users = await _userManager.Users.ToListAsync();

@@ -40,6 +40,7 @@
                                         Cart
                                     </a>
                                 </button>
+                                
                             </div>
                         </div>
                     </nav>
@@ -51,11 +52,25 @@
 
     <!-- Main Content -->
     <div class="container mt-4">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                
+            </div>
+            <script>
+                window.setTimeout(function () {
+                    $(".alert").fadeTo(500, 0).slideUp(500, function () {
+                        $(this).remove();
+                    });
+                }, 3000);
+            </script>
+        }
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
+   
     
 
     <!-- Scripts -->

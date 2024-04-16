@@ -1,4 +1,5 @@
 ﻿@model ShoppingCart
+
 @{
     ViewData["Title"] = "Index";
     decimal total = 0;
@@ -28,7 +29,7 @@
                             <button class="btn btn-sm btn-outline-dark increment" data-product-id="@item.ProductId">+</button>
                         </td>
                         <td>@item.Price </td>
-                        <td>@(item.Price * item.Quantity) </td>
+                        <td class="total">@(item.Price * item.Quantity) </td>
                         <td>
                             <a class="btn btn-outline-danger" asp-action="RemoveFromCart" asp-route-productId="@item.ProductId">Xóa</a>
                             
@@ -50,6 +51,7 @@
         
     </div>
 </div>
+
 @section scripts {
     <script>
         $(document).ready(function () {
@@ -68,24 +70,34 @@
                     }
                 }
                 updateTotal($(this));
+                updateCart(productId, parseInt(quantityElement.text())); //Chuyển đối số là số lượng đã được cập nhật.
             });
         });
+
 
         function updateTotal(button) {
             var quantityElement = button.siblings('.quantity');
             var currentQuantity = parseInt(quantityElement.text());
             var price = parseFloat(quantityElement.data('price'));
             var totalElement = button.closest('tr').find('.total');
-            var totalValue = price * currentQuantity; // Cập nhật tổng cộng dựa trên số lượng mới
+            var totalValue = price * currentQuantity;
             totalElement.text(totalValue.toFixed(2));
-
-            // Update the total cost of the shopping cart
-            var currentTotal = 0;
-            $('.total').each(function () {
-                currentTotal += parseFloat($(this).text());
-            });
-            $('#cart-total').text(currentTotal.toFixed(2));
         }
-    </script>
 
+        function updateCart(productId, quantity) {
+            $.ajax({
+                type: "POST",
+                url: "/ShoppingCart/UpdateCart", // URL đến phương thức hành động của bạn
+                data: { productId: productId, quantity: quantity },
+                success: function (response) {
+                    // Xử lý thành công nếu cần.
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                            // Xử lý lỗi nếu cần.
+                }
+            });
+        }
+
+    </script>
 }

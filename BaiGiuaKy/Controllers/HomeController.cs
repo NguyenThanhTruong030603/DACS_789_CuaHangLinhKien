@@ -69,7 +69,7 @@ namespace BaiGiuaKy.Controllers
         {
             ViewData["Title"] = "Tìm ki?m";
 
-            // Retrieve the search string from TempData if available
+            //Truy xu?t chu?i tìm ki?m t? TempData n?u có s?n.
             searchString = searchString ?? TempData["SearchString"] as string;
 
             var products = await _productRepository.GetAllAsync();

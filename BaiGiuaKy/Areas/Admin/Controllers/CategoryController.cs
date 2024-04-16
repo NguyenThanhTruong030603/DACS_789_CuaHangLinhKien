@@ -13,15 +13,26 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ApplicationDbContext _context;
 
-        public CategoryController(IProductRepository productRepository, ICategoryRepository categoryRepository)
+        public CategoryController(IProductRepository productRepository, ICategoryRepository categoryRepository, ApplicationDbContext context)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _context = context;
         }
 
+        [HttpGet]
+        public IActionResult AutocompleteSearch(string term)
+        {
+            var category = _context.Categories
+                .Where(c => c.Name.Contains(term))
+                .Select(c => c.Name)
+                .ToList();
+            return Ok(category);
+        }
         // Hiển thị danh sách sản phẩm
-        
+
         public async Task<IActionResult> Index(int? page)
         {
             ViewData["Title"] = "Trang Chủ";

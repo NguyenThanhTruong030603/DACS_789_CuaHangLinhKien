@@ -22,6 +22,7 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
             _context = context;
             
         }
+        
         public async Task<IActionResult> Index(int? page)
         {
             ViewData["Title"] = "Trang Chủ";

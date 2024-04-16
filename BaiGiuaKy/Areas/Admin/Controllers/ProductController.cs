@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BaiGiuaKy.Areas.Admin.Controllers
 {
@@ -15,13 +20,23 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
 
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ApplicationDbContext _context;
 
-        public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository)
+        public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository, ApplicationDbContext context)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _context = context;
         }
-
+        [HttpGet]
+        public IActionResult AutocompleteSearch(string term)
+        {
+            var product = _context.Products
+                .Where(c => c.Name.Contains(term))
+                .Select(c => c.Name)
+                .ToList();
+            return Ok(product);
+        }
         // Hiển thị danh sách sản phẩm
         public async Task<IActionResult> Index(int? page)
         {

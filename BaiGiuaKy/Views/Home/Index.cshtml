@@ -41,7 +41,6 @@
                         <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title">@item.Name</h5>
-                            <p class="card-text">@item.Description</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="text-primary fw-bold">@item.Price.ToString("#,##0") USD</span>
                                 <a asp-controller="ShoppingCart" asp-action="AddToCart" asp-route-ProductId="@item.Id" asp-route-quantity="@numOfQuantity" class="btn btn-outline-primary">
@@ -96,7 +95,8 @@
         <div class="row">
             <div class="col-md-6">
                 <h5>Thông tin liên hệ</h5>
-                <p>Số điện thoại: 039988907</p>
+                <p>Số điện thoại: 0399988907</p>
+                <p>Gmail: <a href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSKkVNQtMkRXrdrtZbGHscGltgCBBRLCDRsZgKHkdvKRgsmjWHwbdqRnSjwHNnBgHKLkzVzh">truongleu8@gmail.com</a></p>
                 <p>Địa chỉ: 123 Đường ABC, Thành phố HCM, Việt Nam</p>
             </div>
             <div class="col-md-6">
@@ -110,23 +110,4 @@
     </div>
 </footer>
 
-@* <script>
-    $(document).ready(function () {
-        $('#searchInput').autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '/Home/SearchAutocomplete',
-                    dataType: 'json',
-                    data: { term: request.term },
-                    success: function (data) {
-                        response(data);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Lỗi khi gọi phương thức SearchAutocomplete:', error);
-                    }
-                });
-            },
-            minLength: 2 // Số ký tự tối thiểu trước khi autocomplete kích hoạt
-        });
-    });
-</script> *@
+

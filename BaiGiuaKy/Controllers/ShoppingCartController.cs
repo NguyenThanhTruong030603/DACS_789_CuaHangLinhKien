@@ -54,6 +54,7 @@ namespace BaiGiuaKy.Controllers
             return View("OrderCompleted", order.Id);
         }
 
+       
 
         public IActionResult AddToCart(int productId, int quantity)
         {
@@ -76,10 +77,12 @@ namespace BaiGiuaKy.Controllers
             cart.AddItem(cartItem);
             
             HttpContext.Session.SetObjectAsJson("Cart", cart);
+            TempData["SuccessMessage"] = "Đã thêm vào giỏ hàng thành công!";
             return RedirectToAction("AddToCart", "ShoppingCart");
-           
+            
 
         }
+        
 
         public IActionResult Index()
         {
@@ -144,7 +147,26 @@ namespace BaiGiuaKy.Controllers
             // Trả về View với model là order đã tìm được
             return View(order);
         }
+        [HttpPost]
+        public IActionResult UpdateCart(int productId, int quantity)
+        {
+            //Cập nhật số lượng của sản phẩm trong giỏ hàng
 
+
+
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+            if (cart != null)
+            {
+                var cartItem = cart.Items.FirstOrDefault(item => item.ProductId == productId);
+                if (cartItem != null)
+                {
+                    cartItem.Quantity = quantity;
+                    HttpContext.Session.SetObjectAsJson("Cart", cart);
+                }
+            }
+
+            return Ok(); 
+        }
 
     }
 }
