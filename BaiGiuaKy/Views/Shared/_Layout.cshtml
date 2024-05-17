@@ -11,21 +11,24 @@
     <link rel="stylesheet" href="~/BaiGiuaKy.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <!-- Header -->
-    <header class="bg-danger text-white py-4">
+    
+    <header class="bg-primary text-light sticky-top py-3">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h1 class="fw-bold"><a href="/Home/Index" class="text-white text-decoration-none">789 Store</a></h1>
+                <div class="col-lg-4 col-md-6 mb-2 mb-md-0">
+                    <h1 class="fw-bold">
+                        <a href="/Home/Index" class="text-light text-decoration-none">789 Store</a>
+                    </h1>
                 </div>
-                <div class="col-md-6">
-                    <nav class="navbar navbar-expand-lg navbar-dark justify-content-end">
+                <div class="col-lg-8 col-md-6">
+                    <nav class="navbar navbar-expand-lg navbar-light justify-content-end">
                         <div class="container-fluid">
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="navbar-toggler-icon"></span>
                             </button>
-                            <div class="collapse navbar-collapse" id="navbarNav">
+                            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                                
                                 <ul class="navbar-nav ms-auto">
                                     <li class="nav-item">
                                         <a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index">Trang Quản Lý</a>
@@ -34,13 +37,11 @@
                                 <!-- Login Button -->
                                 <partial name="_LoginPartial" />
                                 <!-- Cart Button -->
-                                <button class="btn btn-outline-light" type="submit">
-                                    <a href="@Url.Action("Index","ShoppingCart")" class="text-white text-decoration-none">
-                                        <i class="bi-cart-fill me-1"></i>
-                                        Cart
-                                    </a>
-                                </button>
-                                
+                                <!-- Cart button -->
+                                <a href="@Url.Action("Index","ShoppingCart")" class="btn btn-outline-light ms-3">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Giỏ hàng (0)
+                                </a>
                             </div>
                         </div>
                     </nav>
@@ -50,6 +51,7 @@
     </header>
 
 
+    
     <!-- Main Content -->
     <div class="container mt-4">
         @if (TempData["SuccessMessage"] != null)

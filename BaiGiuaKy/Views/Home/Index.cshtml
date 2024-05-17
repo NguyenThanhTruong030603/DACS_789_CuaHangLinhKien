@@ -18,9 +18,38 @@
     ViewData["Title"] = "Trang Chủ";
     int numOfQuantity = 1;
 }
+<div id="categoryDropdown" onmouseover="showCategories()" onmouseleave="hideCategories()">
+    <button>Chọn loại sản phẩm</button>
+    <div id="categoryList" style="display: none;" onmouseover="cancelHide()">
+        <ul>
+            <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 1 })">Loại 1</a></li>
+            <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 2 })">Loại 2</a></li>
+            <!-- Thêm các liên kết cho các loại khác nếu cần -->
+        </ul>
+    </div>
+</div>
 
+<script>
+    var timeout;
+    function showCategories() {
+        var categoryList = document.getElementById("categoryList");
+        clearTimeout(timeout); // Đảm bảo thanh loại sản phẩm không bị ẩn khi di chuột vào nó
+        categoryList.style.display = "block";
+    }
+
+    function hideCategories() {
+        var categoryList = document.getElementById("categoryList");
+        timeout = setTimeout(function () {
+            categoryList.style.display = "none";
+        }, 500); // Sau 0.5 giây, ẩn thanh loại sản phẩm nếu người dùng không di chuột vào nó
+    }
+
+    function cancelHide() {
+        clearTimeout(timeout); // Hủy bỏ việc ẩn thanh loại sản phẩm nếu người dùng di chuột vào danh sách loại sản phẩm
+    }
+</script>
 <h1 class="text-center my-4">Sản Phẩm</h1>
-<
+
 @using (Html.BeginForm("Search", "Home", FormMethod.Get))
 {
     <p>
@@ -31,9 +60,10 @@
     </p>
 }
 
-<section  class="py-5">
+<section class="py-5">
     <div class="container">
-        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+            <!-- Increased spacing between product cards -->
             @foreach (var item in Model)
             {
                 <div class="col">

@@ -38,7 +38,7 @@ namespace BaiGiuaKy.Controllers
 
             
 
-            int pageSize = 4;
+            int pageSize = 8;
             int pageNumber = (page ?? 1);
             return View(await products.ToPagedListAsync(pageNumber, pageSize));
         }
@@ -84,6 +84,20 @@ namespace BaiGiuaKy.Controllers
 
             // Store the search string in TempData for subsequent requests
             TempData["SearchString"] = searchString;
+
+            return View("Index", await products.ToPagedListAsync(pageNumber, pageSize));
+        }
+
+        public async Task<IActionResult> ShowProductsByCategory(int categoryId, int? page)
+        {
+            ViewData["Title"] = "S?n ph?m theo lo?i";
+
+            // L?y t?t c? s?n ph?m thu?c lo?i ???c ch? ??nh
+            var products = await _productRepository.GetAllAsync();
+            products = products.Where(p => p.CategoryId == categoryId);
+
+            int pageSize = 4;
+            int pageNumber = page ?? 1;
 
             return View("Index", await products.ToPagedListAsync(pageNumber, pageSize));
         }
