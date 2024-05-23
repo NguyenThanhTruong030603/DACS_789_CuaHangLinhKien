@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 using System;
+using BaiGiuaKy.Extensions;
 
 namespace BaiGiuaKy.Controllers
 {
@@ -35,8 +36,9 @@ namespace BaiGiuaKy.Controllers
             ViewData["Title"] = "Trang Ch?";
 
             var products = await _productRepository.GetAllAsync();
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
 
-            
 
             int pageSize = 8;
             int pageNumber = (page ?? 1);

@@ -18,5 +18,9 @@
 	{
 		Items.RemoveAll(i => i.ProductId == productId);
 	}
-	// Các phương thức khác...
+    // Các phương thức khác...
+    public int GetTotalQuantity()
+    {
+        return Items.Sum(i => i.Quantity);
+    }
 }
