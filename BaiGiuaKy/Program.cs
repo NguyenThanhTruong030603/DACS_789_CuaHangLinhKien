@@ -3,8 +3,8 @@ using BaiGiuaKy.Models;
 using BaiGiuaKy.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
-
+using BaiGiuaKy.Models.MoMo;
+using BaiGiuaKy.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,9 +32,9 @@ builder.Services.AddSession(options =>
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
 });
-
+builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddScoped<IMomoService, MomoService>();
 builder.Services.AddScoped<IProductRepository, EFProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
 builder.Services.AddScoped<IOrderRepository, EFOrderRepository>();

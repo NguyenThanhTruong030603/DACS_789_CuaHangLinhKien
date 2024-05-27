@@ -20,22 +20,22 @@
 
 @using (Html.BeginForm("Search", "Home", FormMethod.Get))
 {
-    <div class="header_bottom">
-        <p>
-            <div style="text-align: right;">
-                <a href="@Url.Action("Index", "ShoppingCart")" class="btn btn-outline-light">
-                    <i class="bi-cart-fill me-1"></i>
-                    Giỏ hàng
-                    <span class="badge bg-secondary">@ViewBag.CartItemCount</span>
-                </a>
-            </div>
-            <div style="text-align: right;">
-                Tìm kiếm: <input type="text" id="autocomplete" name="searchString" style="width: 300px;" />
-                <input type="submit" value="Tìm kiếm" class="btn btn-primary">
-            </div>
-        </p>
+    <div class="header_bottom d-flex justify-content-end align-items-center">
+        <div class="input-group input-group-sm">
+            <input type="text" id="autocomplete" name="searchString" class="form-control rounded-end" style="width: 200px;" placeholder="Tìm kiếm" aria-label="Tìm kiếm" aria-describedby="search-addon">
+            <button type="submit" class="btn btn-outline-primary rounded-start"><i class="bi bi-search"></i></button>
+        </div>
+        <a href="@Url.Action("Index", "ShoppingCart")" class="btn btn-outline-light ms-3">
+            <i class="bi-cart-fill me-1"></i>
+            Giỏ hàng
+            <span class="badge bg-secondary">@ViewBag.CartItemCount</span>
+        </a>
     </div>
 }
+
+
+
+
 
 <div class="header_slide">
     <div class="header_bottom_left">

@@ -93,11 +93,10 @@ body {
 }
 
 /**** Cart ****/
-.cart{
-	float:right;
-	 position: relative;
-	 padding-right:40px;
-	 margin-top:20px;
+.cart {
+    position: relative;
+    padding-right: 40px;
+    margin-top: 20px;
 }
 .cart p{
 	font-size:0.9em;
@@ -175,6 +174,13 @@ body {
 	-webkit-border-radius: 6px;
 	-moz-border-rfadius: 6px;
 	-o-border-radius: 6px;
+}
+.search-container {
+	flex: 1;
+}
+
+.cart-container {
+	flex-shrink: 0;
 }
 .menu {
 	float: left;
@@ -1803,7 +1809,10 @@ body {
 		margin: 0.3em 0 0;
 	}
 	.header_top {
-		padding: 12px 0 20px;
+		
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 	.cart p {
 		display: block;

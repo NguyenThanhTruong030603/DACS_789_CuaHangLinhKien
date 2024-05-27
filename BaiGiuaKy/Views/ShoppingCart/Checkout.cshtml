@@ -1,4 +1,5 @@
 ﻿@model Order
+
 <h2>Checkout</h2>
 <form asp-action="Checkout" method="post">
     <div class="form-group">
@@ -7,12 +8,17 @@
     </div>
     <div class="form-group">
         <label asp-for="Notes">Notes</label>
-
-       
-<textarea asp-for="Notes" class="form-control"></textarea>
+        <textarea asp-for="Notes" class="form-control"></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">Place Order</button>
+    <div class="form-group">
+        <label asp-for="PaymentMethod">Phương thức thanh toán</label>
+        <select asp-for="PaymentMethod" class="form-control">
+            <option value="CashOnDelivery">Thanh toán tận nơi</option>
+            <option value="MoMo">Thanh toán qua MoMo</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Đặt Hàng</button>
     <div class="card-footer text-muted text-center">
-        <a asp-action="Index" class="btn btn-outline-primary">Quay lại </a>
+        <a asp-action="Index" class="btn btn-outline-primary">Quay lại</a>
     </div>
 </form>

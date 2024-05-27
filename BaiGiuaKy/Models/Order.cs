@@ -11,6 +11,7 @@ namespace BaiGiuaKy.Models
         public decimal TotalPrice { get; set; }
         public string ShippingAddress { get; set; }
         public string Notes { get; set; }
+        public string PaymentMethod { get; set; }
         [ForeignKey("UserId")]
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }

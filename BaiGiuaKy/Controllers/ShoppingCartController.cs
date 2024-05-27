@@ -1,11 +1,12 @@
 ﻿using BaiGiuaKy.Extensions;
 using BaiGiuaKy.Models;
 using BaiGiuaKy.Repositories;
+using BaiGiuaKy.Models.MoMo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using BaiGiuaKy.Service;
 
 namespace BaiGiuaKy.Controllers
 {
@@ -17,46 +18,78 @@ namespace BaiGiuaKy.Controllers
         private readonly IProductRepository _productRepository;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        public ShoppingCartController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IProductRepository productRepository)
+        private IMomoService _momoService;
+        public ShoppingCartController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IProductRepository productRepository, IMomoService momoService)
         {
             _productRepository = productRepository;
             _context = context;
             _userManager = userManager;
+            _momoService = momoService;
         }
         public IActionResult Checkout()
         {
             return View(new Order());
         }
         [HttpPost]
-        public async Task<IActionResult> Checkout(Order order)
+		public async Task<IActionResult> Checkout(Order order)
+		{
+			var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+			var user = await _userManager.GetUserAsync(User);
 
-        {
-            var cart =
-            HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
-            if (cart == null || !cart.Items.Any())
-            {
-                // Xử lý giỏ hàng trống...
-                return RedirectToAction("Index");
-            }
-            var user = await _userManager.GetUserAsync(User);
-            order.UserId = user.Id;
-            order.OrderDate = DateTime.UtcNow;
-            order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
-            order.OrderDetails = cart.Items.Select(i => new OrderDetail
-            {
-                ProductId = i.ProductId,
-                Quantity = i.Quantity,
-                Price = i.Price
-            }).ToList();
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-            HttpContext.Session.Remove("Cart");
-            return View("OrderCompleted", order.Id);
-        }
+			if (cart == null || !cart.Items.Any())
+			{
+				// Handle empty cart scenario
+				TempData["Error"] = "Your cart is empty. Please add items to your cart before checking out.";
+				return RedirectToAction("Index");
+			}
 
-       
+			// Common order processing
+			order.UserId = user.Id;
+			order.OrderDate = DateTime.UtcNow;
+			order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
+			order.OrderDetails = cart.Items.Select(i => new OrderDetail
+			{
+				ProductId = i.ProductId,
+				Quantity = i.Quantity,
+				Price = i.Price
+			}).ToList();
 
-        public IActionResult AddToCart(int productId, int quantity)
+			if (order.PaymentMethod == "MoMo")
+			{
+				// Handle payment creation
+				string id = Guid.NewGuid().ToString();
+				var orderInfo = new OrderInfoModel
+				{
+					Amount = (double)cart.Items.Sum(i => i.Price * i.Quantity * 1000),
+					FullName = user.FullName,
+					OrderId = id,
+					OrderInfo = "thanh toan cho don hang " + id
+				};
+
+				var response = await _momoService.CreatePaymentAsync(orderInfo);
+
+				if (response == null || string.IsNullOrEmpty(response.PayUrl))
+				{
+					// Handle payment creation failure
+					TempData["Error"] = "There was an error creating the payment. Please try again later.";
+					return RedirectToAction("Index");
+				}
+
+				return Redirect(response.PayUrl);
+			}
+			else
+			{
+				// Handle normal order completion
+				_context.Orders.Add(order);
+				await _context.SaveChangesAsync();
+				HttpContext.Session.Remove("Cart");
+				return View("OrderCompleted", order.Id);
+			}
+		}
+
+
+
+		public IActionResult AddToCart(int productId, int quantity)
         {
             // Lấy thông tin sản phẩm từ cơ sở dữ liệu
             var product = _context.Products.FirstOrDefault(p => p.Id == productId);
@@ -167,6 +200,39 @@ namespace BaiGiuaKy.Controllers
 
             return Ok(); 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePaymentUrl(OrderInfoModel model)
+        {
+            var response = await _momoService.CreatePaymentAsync(model);
+            return Redirect(response.PayUrl);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PaymentCallBackAsync()
+        {
+           
+            var cart =
+            HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+            var response = _momoService.PaymentExecuteAsync(HttpContext.Request.Query);
+            var user = await _userManager.GetUserAsync(User);
+            Order order = new Order();
+            order.UserId = user.Id;
+            order.OrderDate = DateTime.UtcNow;
+            order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
+            order.OrderDetails = cart.Items.Select(i => new OrderDetail
+            {
+                ProductId = i.ProductId,
+                Quantity = i.Quantity,
+                Price = i.Price
+            }).ToList();
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            HttpContext.Session.Remove("Cart");
+            return View("OrderCompleted", order.Id);
+
+        }
+
 
     }
 }
