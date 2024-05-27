@@ -33,7 +33,8 @@ namespace BaiGiuaKy.Controllers
         [HttpPost]
 		public async Task<IActionResult> Checkout(Order order)
 		{
-			var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+           
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
 			var user = await _userManager.GetUserAsync(User);
 
 			if (cart == null || !cart.Items.Any())
@@ -42,9 +43,11 @@ namespace BaiGiuaKy.Controllers
 				TempData["Error"] = "Your cart is empty. Please add items to your cart before checking out.";
 				return RedirectToAction("Index");
 			}
-
-			// Common order processing
-			order.UserId = user.Id;
+            HttpContext.Session.SetString("ShippingAddress", order.ShippingAddress);
+            HttpContext.Session.SetString("Notes", order.Notes);
+            HttpContext.Session.SetString("PaymentMethod", order.PaymentMethod);
+            // Common order processing
+            order.UserId = user.Id;
 			order.OrderDate = DateTime.UtcNow;
 			order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
 			order.OrderDetails = cart.Items.Select(i => new OrderDetail
@@ -67,15 +70,15 @@ namespace BaiGiuaKy.Controllers
 				};
 
 				var response = await _momoService.CreatePaymentAsync(orderInfo);
-
+				
 				if (response == null || string.IsNullOrEmpty(response.PayUrl))
 				{
 					// Handle payment creation failure
 					TempData["Error"] = "There was an error creating the payment. Please try again later.";
 					return RedirectToAction("Index");
 				}
-
-				return Redirect(response.PayUrl);
+                _context.Orders.Add(order);
+                return Redirect(response.PayUrl);
 			}
 			else
 			{
@@ -216,20 +219,37 @@ namespace BaiGiuaKy.Controllers
             HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
             var response = _momoService.PaymentExecuteAsync(HttpContext.Request.Query);
             var user = await _userManager.GetUserAsync(User);
-            Order order = new Order();
+			Order order = new Order();
+            string shippingAddress = HttpContext.Session.GetString("ShippingAddress");
+            string notes = HttpContext.Session.GetString("Notes");
+            string paymentMethod = HttpContext.Session.GetString("PaymentMethod");
             order.UserId = user.Id;
             order.OrderDate = DateTime.UtcNow;
             order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
+            order.ShippingAddress = shippingAddress;
+            order.Notes = notes;
+            order.PaymentMethod = paymentMethod;
             order.OrderDetails = cart.Items.Select(i => new OrderDetail
             {
                 ProductId = i.ProductId,
                 Quantity = i.Quantity,
-                Price = i.Price
-            }).ToList();
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-            HttpContext.Session.Remove("Cart");
-            return View("OrderCompleted", order.Id);
+               Price = i.Price
+                }).ToList();
+            if (response.IsSuccess == true)
+            {
+                _context.Orders.Add(order);
+
+                await _context.SaveChangesAsync();
+                HttpContext.Session.Remove("Cart");
+                return View("OrderCompleted", order.Id);
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+
+
+
 
         }
 
