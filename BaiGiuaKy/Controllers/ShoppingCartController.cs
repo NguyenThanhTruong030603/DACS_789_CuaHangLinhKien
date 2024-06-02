@@ -28,7 +28,18 @@ namespace BaiGiuaKy.Controllers
         }
         public IActionResult Checkout()
         {
-            return View(new Order());
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+            if (cart == null || !cart.Items.Any())
+            {
+                TempData["Error"] = "Your cart is empty. Please add items to your cart before checking out.";
+                return RedirectToAction("Index");
+            }
+
+            var order = new Order
+            {
+                TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity)
+            };
+            return View(order);
         }
         [HttpPost]
 		public async Task<IActionResult> Checkout(Order order)

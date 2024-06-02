@@ -32,23 +32,21 @@
                         <td class="total">@(item.Price * item.Quantity) </td>
                         <td>
                             <a class="btn btn-outline-danger" asp-action="RemoveFromCart" asp-route-productId="@item.ProductId">Xóa</a>
-                            
                         </td>
                     </tr>
-                    total = total + (item.Price * item.Quantity);
+                    total += item.Price * item.Quantity;
                 }
             </tbody>
-            <a class="btn btn-outline-primary" asp-controller="ShoppingCart" asp-action="OrderList">Đơn hàng đã đặt</a>
         </table>
-        <h5 class="btn btn-block btn-lg" style="width: 100%; cursor: default; background-color: #ffc107;">
+        <h5 class="btn btn-block btn-lg" id="totalPrice" style="width: 100%; cursor: default; background-color: #ffc107;">
             Tổng tiền:
-            <span style="font-weight: bold; color: #dc3545;">@total</span> VNĐ
+            <span id="totalPriceValue" style="font-weight: bold; color: #dc3545;">@total</span> VNĐ
         </h5>
         <a class="btn btn-outline-primary" asp-controller="ShoppingCart" asp-action="Checkout">Thanh toán</a>
         <div class="card-footer text-muted text-center">
             <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">Tiếp tục mua hàng </a>
         </div>
-        
+        <a class="btn btn-outline-primary" asp-controller="ShoppingCart" asp-action="OrderList">Đơn hàng đã đặt</a>
     </div>
 </div>
 
@@ -70,10 +68,9 @@
                     }
                 }
                 updateTotal($(this));
-                updateCart(productId, parseInt(quantityElement.text())); //Chuyển đối số là số lượng đã được cập nhật.
+                updateCart(productId, parseInt(quantityElement.text()));
             });
         });
-
 
         function updateTotal(button) {
             var quantityElement = button.siblings('.quantity');
@@ -82,22 +79,29 @@
             var totalElement = button.closest('tr').find('.total');
             var totalValue = price * currentQuantity;
             totalElement.text(totalValue.toFixed(2));
+            updateTotalPrice();
+        }
+
+        function updateTotalPrice() {
+            var totalPrice = 0;
+            $('.total').each(function () {
+                totalPrice += parseFloat($(this).text());
+            });
+            $('#totalPriceValue').text(totalPrice.toFixed(2));
         }
 
         function updateCart(productId, quantity) {
             $.ajax({
                 type: "POST",
-                url: "/ShoppingCart/UpdateCart", // URL đến phương thức hành động của bạn
+                url: "/ShoppingCart/UpdateCart",
                 data: { productId: productId, quantity: quantity },
                 success: function (response) {
-                    // Xử lý thành công nếu cần.
+                    // Successful update
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr.responseText);
-                            // Xử lý lỗi nếu cần.
                 }
             });
         }
-
     </script>
 }

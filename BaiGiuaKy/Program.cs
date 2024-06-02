@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BaiGiuaKy.Models.MoMo;
 using BaiGiuaKy.Service;
+using Microsoft.AspNetCore.Authentication.Google;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,8 +40,13 @@ builder.Services.AddScoped<IMomoService, MomoService>();
 builder.Services.AddScoped<IProductRepository, EFProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
 builder.Services.AddScoped<IOrderRepository, EFOrderRepository>();
+var configuration = builder.Configuration;
+builder.Services.AddAuthentication().AddGoogle(googleoptions =>
+{
+	googleoptions.ClientId = configuration["Authentication:Google:ClientId"];
+	googleoptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
 
-
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

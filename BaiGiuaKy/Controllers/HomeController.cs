@@ -44,9 +44,17 @@ namespace BaiGiuaKy.Controllers
             int pageNumber = (page ?? 1);
             return View(await products.ToPagedListAsync(pageNumber, pageSize));
         }
+        public IActionResult about()
+        {
+            return View();
+        }
 
-      
-        [AllowAnonymous]
+		public IActionResult Contact()
+		{
+			return View();
+		}
+
+		[AllowAnonymous]
         public async Task<IActionResult> Display(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
