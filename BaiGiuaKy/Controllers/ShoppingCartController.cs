@@ -26,41 +26,76 @@ namespace BaiGiuaKy.Controllers
             _userManager = userManager;
             _momoService = momoService;
         }
-        public IActionResult Checkout()
-        {
-            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
-            if (cart == null || !cart.Items.Any())
-            {
-                TempData["Error"] = "Your cart is empty. Please add items to your cart before checking out.";
-                return RedirectToAction("Index");
-            }
+		public IActionResult ApplyDiscount(string discountCode)
+		{
+			var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+			if (cart == null || !cart.Items.Any())
+			{
+				TempData["Error"] = "Your cart is empty. Please add items to your cart before applying a discount.";
+				return RedirectToAction("Index");
+			}
 
-            var order = new Order
-            {
-                TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity)
-            };
-            return View(order);
-        }
-        [HttpPost]
+			var discount = _context.Discounts.FirstOrDefault(d => d.Code == discountCode && d.ExpirationDate >= DateTime.Now);
+			if (discount == null)
+			{
+				TempData["Error"] = "Invalid or expired discount code.";
+				return RedirectToAction("Index");
+			}
+
+			cart.DiscountCode = discountCode;
+			cart.DiscountPercentage = discount.Percentage;
+
+			HttpContext.Session.SetObjectAsJson("Cart", cart);
+			TempData["SuccessMessage"] = "Discount applied successfully!";
+			return RedirectToAction("Index");
+		}
+		public IActionResult Checkout()
+        {
+			var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+			if (cart == null || !cart.Items.Any())
+			{
+				TempData["Error"] = "Your cart is empty. Please add items to your cart before checking out.";
+				return RedirectToAction("Index");
+			}
+
+			var order = new Order
+			{
+				TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity)
+			};
+
+			if (!string.IsNullOrEmpty(cart.DiscountCode))
+			{
+				order.TotalPrice = order.TotalPrice * (1 - cart.DiscountPercentage / 100);
+			}
+
+			return View(order);
+		}
+		[HttpPost]
 		public async Task<IActionResult> Checkout(Order order)
 		{
-           
-            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+			var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
 			var user = await _userManager.GetUserAsync(User);
 
 			if (cart == null || !cart.Items.Any())
 			{
-				// Handle empty cart scenario
 				TempData["Error"] = "Your cart is empty. Please add items to your cart before checking out.";
 				return RedirectToAction("Index");
 			}
-            HttpContext.Session.SetString("ShippingAddress", order.ShippingAddress);
-            HttpContext.Session.SetString("Notes", order.Notes);
-            HttpContext.Session.SetString("PaymentMethod", order.PaymentMethod);
-            // Common order processing
-            order.UserId = user.Id;
+
+			HttpContext.Session.SetString("ShippingAddress", order.ShippingAddress);
+			HttpContext.Session.SetString("Notes", order.Notes);
+			HttpContext.Session.SetString("PaymentMethod", order.PaymentMethod);
+
+			order.UserId = user.Id;
 			order.OrderDate = DateTime.UtcNow;
 			order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
+
+			if (!string.IsNullOrEmpty(cart.DiscountCode))
+			{
+				order.TotalPrice = order.TotalPrice * (1 - cart.DiscountPercentage / 100);
+				order.DiscountCode = cart.DiscountCode;
+			}
+
 			order.OrderDetails = cart.Items.Select(i => new OrderDetail
 			{
 				ProductId = i.ProductId,
@@ -70,30 +105,28 @@ namespace BaiGiuaKy.Controllers
 
 			if (order.PaymentMethod == "MoMo")
 			{
-				// Handle payment creation
 				string id = Guid.NewGuid().ToString();
 				var orderInfo = new OrderInfoModel
 				{
-					Amount = (double)cart.Items.Sum(i => i.Price * i.Quantity * 1000),
+					Amount = (double)cart.Items.Sum(i => i.Price * i.Quantity * (1 - cart.DiscountPercentage / 100)),
 					FullName = user.FullName,
 					OrderId = id,
 					OrderInfo = "thanh toan cho don hang " + id
 				};
 
 				var response = await _momoService.CreatePaymentAsync(orderInfo);
-				
+
 				if (response == null || string.IsNullOrEmpty(response.PayUrl))
 				{
-					// Handle payment creation failure
 					TempData["Error"] = "There was an error creating the payment. Please try again later.";
 					return RedirectToAction("Index");
 				}
-                _context.Orders.Add(order);
-                return Redirect(response.PayUrl);
+
+				_context.Orders.Add(order);
+				return Redirect(response.PayUrl);
 			}
 			else
 			{
-				// Handle normal order completion
 				_context.Orders.Add(order);
 				await _context.SaveChangesAsync();
 				HttpContext.Session.Remove("Cart");

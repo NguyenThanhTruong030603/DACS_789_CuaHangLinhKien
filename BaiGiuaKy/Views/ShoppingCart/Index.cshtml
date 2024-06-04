@@ -2,8 +2,18 @@
 
 @{
     ViewData["Title"] = "Index";
-    decimal total = 0;
+    decimal total = Model.Items.Sum(i => i.Price * i.Quantity);
+    decimal discountAmount = 0;
+    decimal discountPercentage = Model.DiscountPercentage;
+    decimal finalPrice = total;
+
+    if (!string.IsNullOrEmpty(Model.DiscountCode))
+    {
+        discountAmount = total * discountPercentage / 100;
+        finalPrice = total - discountAmount;
+    }
 }
+
 <h2 class="text-center my-4">Giỏ hàng của bạn</h2>
 
 <div class="container">
@@ -13,7 +23,7 @@
                 <tr>
                     <th scope="col">Sản phẩm</th>
                     <th scope="col">Số lượng</th>
-                    <th scope="col">Giá </th>
+                    <th scope="col">Giá</th>
                     <th scope="col">Tổng cộng</th>
                     <th scope="col">Hành động</th>
                 </tr>
@@ -28,25 +38,43 @@
                             <span class="quantity" data-price="@item.Price">@item.Quantity</span>
                             <button class="btn btn-sm btn-outline-dark increment" data-product-id="@item.ProductId">+</button>
                         </td>
-                        <td>@item.Price </td>
-                        <td class="total">@(item.Price * item.Quantity) </td>
+                        <td>@item.Price</td>
+                        <td class="total">@(item.Price * item.Quantity)</td>
                         <td>
                             <a class="btn btn-outline-danger" asp-action="RemoveFromCart" asp-route-productId="@item.ProductId">Xóa</a>
                         </td>
                     </tr>
-                    total += item.Price * item.Quantity;
                 }
+                <tr>
+                    <td colspan="3"></td>
+                    <td>
+                        <div class="text-right">
+                            <div class="summary-section mt-3 text-right">
+                                <form asp-action="ApplyDiscount" method="post" class="discount-form d-inline-block">
+                                    <div class="input-group mb-3">
+                                        <input type="text" id="discountCode" name="discountCode" class="form-control" placeholder="Discount Code" />
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary">Apply</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="totals">
+                                <p class="mb-2"><strong>Tổng tạm tính:</strong> <span id="totalPriceValue" class="font-weight-bold text-danger">@total</span> VNĐ</p>
+                                <p class="mb-2"><strong>Discount (<span class="font-weight-bold">@discountPercentage%</span>):</strong> <span id="discountAmount" class="text-success font-weight-bold">-@discountAmount.ToString("C")</span></p>
+                                <p class="mb-2"><strong>Thành tiền:</strong> <span id="finalPriceValue" class="text-primary font-weight-bold">@finalPrice.ToString("C")</span></p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
-        <h5 class="btn btn-block btn-lg" id="totalPrice" style="width: 100%; cursor: default; background-color: #ffc107;">
-            Tổng tiền:
-            <span id="totalPriceValue" style="font-weight: bold; color: #dc3545;">@total</span> VNĐ
-        </h5>
-        <a class="btn btn-outline-primary" asp-controller="ShoppingCart" asp-action="Checkout">Thanh toán</a>
-        <div class="card-footer text-muted text-center">
-            <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">Tiếp tục mua hàng </a>
+
+        <a class="btn btn-outline-primary mt-3" asp-controller="ShoppingCart" asp-action="Checkout">Thanh toán</a>
+        <div class="card-footer text-muted text-center mt-3">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">Tiếp tục mua hàng</a>
         </div>
-        <a class="btn btn-outline-primary" asp-controller="ShoppingCart" asp-action="OrderList">Đơn hàng đã đặt</a>
+        <a class="btn btn-outline-primary mt-3" asp-controller="ShoppingCart" asp-action="OrderList">Đơn hàng đã đặt</a>
     </div>
 </div>
 
@@ -88,6 +116,16 @@
                 totalPrice += parseFloat($(this).text());
             });
             $('#totalPriceValue').text(totalPrice.toFixed(2));
+            updateDiscountAndFinalPrice();
+        }
+
+        function updateDiscountAndFinalPrice() {
+            var totalPrice = parseFloat($('#totalPriceValue').text());
+            var discountPercentage = @discountPercentage;
+            var discountAmount = totalPrice * discountPercentage / 100;
+            var finalPrice = totalPrice - discountAmount;
+            $('#discountAmount').text('-' + discountAmount.toFixed(2));
+            $('#finalPriceValue').text(finalPrice.toFixed(2));
         }
 
         function updateCart(productId, quantity) {
@@ -105,3 +143,42 @@
         }
     </script>
 }
+
+<style>
+    .summary-section {
+        margin-top: 20px;
+    }
+
+    .total-price {
+        background-color: #ffc107;
+        color: #dc3545;
+    }
+
+    .discount-form {
+        display: flex;
+        align-items: center;
+    }
+
+    .discount-info {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+        .discount-info p {
+            margin: 0;
+        }
+
+    .input-group {
+        width: 300px;
+        margin-left: auto;
+    }
+
+    .totals {
+        margin-top: 10px;
+    }
+
+        .totals p {
+            margin: 0;
+        }
+</style>
