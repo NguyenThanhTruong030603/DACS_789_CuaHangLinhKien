@@ -25,7 +25,7 @@ using BaiGiuaKy.Models;
 namespace BaiGiuaKy.Areas.Admin.Pages.Account
 {
     [Area("Admin")]
-    [Authorize(Roles = SD.Role_Admin)]
+   // [Authorize(Roles = SD.Role_Admin)]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;

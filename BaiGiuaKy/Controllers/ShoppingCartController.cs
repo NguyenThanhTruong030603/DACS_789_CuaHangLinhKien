@@ -94,6 +94,7 @@ namespace BaiGiuaKy.Controllers
 			{
 				order.TotalPrice = order.TotalPrice * (1 - cart.DiscountPercentage / 100);
 				order.DiscountCode = cart.DiscountCode;
+                
 			}
 
 			order.OrderDetails = cart.Items.Select(i => new OrderDetail

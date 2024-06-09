@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace BaiGiuaKy.Migrations
+namespace DoAnCoSo.Migrations
 {
     /// <inheritdoc />
-    public partial class newmigra : Migration
+    public partial class a : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

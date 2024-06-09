@@ -7,6 +7,7 @@ using BaiGiuaKy.Models.MoMo;
 using BaiGiuaKy.Service;
 using Microsoft.AspNetCore.Authentication.Google;
 using System.Configuration;
+using BaiGiuaKy.Repositories.BaiGiuaKy.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,7 @@ builder.Services.AddScoped<IMomoService, MomoService>();
 builder.Services.AddScoped<IProductRepository, EFProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
 builder.Services.AddScoped<IOrderRepository, EFOrderRepository>();
+builder.Services.AddScoped<IDiscountRepository, EFDiscountRepository>();
 var configuration = builder.Configuration;
 builder.Services.AddAuthentication().AddGoogle(googleoptions =>
 {

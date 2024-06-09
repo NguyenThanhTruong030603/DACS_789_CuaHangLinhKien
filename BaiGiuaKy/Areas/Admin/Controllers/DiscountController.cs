@@ -13,7 +13,7 @@ using System;
 namespace BaiGiuaKy.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+   // [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
     public class DiscountController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -73,6 +73,15 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
             var discounts = await _discountRepository.GetAllAsync();
             return View(discounts);
         }
+        [HttpGet]
+        public IActionResult AutocompleteSearch(string term)
+        {
+            var discount = _context.Discounts
+                .Where(c => c.Code.Contains(term))
+                .Select(c => c.Code)
+                .ToList();
+            return Ok(discount);
+        }
         public async Task<IActionResult> Search(string searchString, int? page)
         {
             ViewData["Title"] = "Tìm kiếm";
@@ -95,5 +104,7 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
 
             return View("Index", await discounts.ToPagedListAsync(pageNumber, pageSize));
         }
+
+       
     }
 }
