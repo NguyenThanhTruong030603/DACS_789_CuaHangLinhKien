@@ -40,11 +40,11 @@
             <thead>
             <thead>
                 <tr>
-                    <th>Id</th>
+                    
                     <th>Mã giảm giá</th>
                     <th>Phần trăm giảm</th>
                     <th>Ngày hết hạn</th>
-                    <th>Actions</th>
+                    <th>Hành động</th>
                 </tr>
             </thead>
             </thead>
@@ -52,9 +52,7 @@
                 @foreach (var category in Model)
                 {
                     <tr>
-                        <td>
-                            @category.Id
-                        </td>
+                        
                         <td>
                             @category.Code
                         </td>
@@ -66,9 +64,9 @@
                             @category.ExpirationDate
                         </td>
                         <td>
-                            <a asp-action="Display" asp-route-id="@category.Id" class="btn btn-primary"><i class="fa fa-eye"></i>View</a> |
-                            <a asp-action="Update" asp-route-id="@category.Id" class="btn btn-secondary"><i class="fa fa-pencil"></i>Edit</a> |
-                            <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger"><i class="fa fa-trash"></i>Delete</a>
+                           
+                            <a asp-action="Update" asp-route-id="@category.Id" class="btn btn-secondary"><i class="fa fa-pencil"></i>Chỉnh sửa</a> 
+                            
 
                         </td>
                     </tr>

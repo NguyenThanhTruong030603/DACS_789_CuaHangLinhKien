@@ -26,13 +26,13 @@
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Time</th>
-                <th>DiscountCode</th>
-                <th>DiscountPercent</th>
-                <th>TotalPrice</th>
-                <th>ShippingAddress</th>
-                <th>Notes</th>
+                <th>Mã</th>
+                <th>Thời gian</th>
+                <th>Mã giảm giá</th>
+                <th>Phần trăm giảm</th>
+                <th>Tổng cộng</th>
+                <th>Địa chỉ giao hàng</th>
+                <th>Ghi chú</th>
             </tr>
         </thead>
         <tbody>
@@ -49,7 +49,7 @@
                     <th></th>
                     <td>
                         <!-- Link đến trang chi tiết đơn hàng -->
-                        <a href="@Url.Action("OrderDetails", "OrderListAdmin", new { orderId = order.Id })">Details</a>
+                        <a href="@Url.Action("OrderDetails", "OrderListAdmin", new { orderId = order.Id })">Chi tiết</a>
                     </td>
                 </tr>
                 //total = total + order.TotalPrice;

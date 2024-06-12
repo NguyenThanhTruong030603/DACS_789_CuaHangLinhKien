@@ -52,16 +52,16 @@
                             <div class="summary-section mt-3 text-right">
                                 <form asp-action="ApplyDiscount" method="post" class="discount-form d-inline-block">
                                     <div class="input-group mb-3">
-                                        <input type="text" id="discountCode" name="discountCode" class="form-control" placeholder="Discount Code" />
+                                        <input type="text" id="discountCode" name="discountCode" class="form-control" placeholder="Mã giảm giá" />
                                         <div class="input-group-append">
-                                            <button type="submit" class="btn btn-primary">Apply</button>
+                                            <button type="submit" class="btn btn-primary">Áp dụng</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                             <div class="totals">
                                 <p class="mb-2"><strong>Tổng tạm tính:</strong> <span id="totalPriceValue" class="font-weight-bold text-danger">@total</span> VNĐ</p>
-                                <p class="mb-2"><strong>Discount (<span class="font-weight-bold">@discountPercentage%</span>):</strong> <span id="discountAmount" class="text-success font-weight-bold">-@discountAmount.ToString("C")</span></p>
+                                <p class="mb-2"><strong>Giảm giá (<span class="font-weight-bold">@discountPercentage%</span>):</strong> <span id="discountAmount" class="text-success font-weight-bold">-@discountAmount.ToString("C")</span></p>
                                 <p class="mb-2"><strong>Thành tiền:</strong> <span id="finalPriceValue" class="text-primary font-weight-bold">@finalPrice.ToString("C")</span></p>
                             </div>
                         </div>

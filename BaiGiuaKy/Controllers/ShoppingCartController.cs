@@ -275,6 +275,14 @@ namespace BaiGiuaKy.Controllers
             order.ShippingAddress = shippingAddress;
             order.Notes = notes;
             order.PaymentMethod = paymentMethod;
+            order.DiscountPercentage = 0;
+
+            if (!string.IsNullOrEmpty(cart.DiscountCode))
+            {
+               
+                order.DiscountCode = cart.DiscountCode;
+                order.DiscountPercentage = cart.DiscountPercentage;
+            }
             order.OrderDetails = cart.Items.Select(i => new OrderDetail
             {
                 ProductId = i.ProductId,

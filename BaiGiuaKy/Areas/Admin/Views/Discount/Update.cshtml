@@ -4,17 +4,17 @@
 
 <form asp-action="Update" asp-route-id="@Model.Id" method="post">
     <div class="form-group">
-        <label asp-for="Code" class="control-label"></label>
+        <label asp-for="Code" class="control-label">Mã giảm giá</label>
         <input asp-for="Code" class="form-control" />
         <span asp-validation-for="Code" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Percentage" class="control-label"></label>
+        <label asp-for="Percentage" class="control-label">Phần trăm giảm</label>
         <input asp-for="Percentage" class="form-control" />
         <span asp-validation-for="Percentage" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="ExpirationDate" class="control-label"></label>
+        <label asp-for="ExpirationDate" class="control-label">Ngày hết hạn</label>
         <input asp-for="ExpirationDate" class="form-control" />
         <span asp-validation-for="ExpirationDate" class="text-danger"></span>
     </div>

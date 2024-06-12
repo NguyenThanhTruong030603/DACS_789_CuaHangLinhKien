@@ -1,9 +1,9 @@
 ﻿@model BaiGiuaKy.Models.Product
 
-<h2>Delete Product</h2>
+<h2>Xóa sản phẩm</h2>
 
 <form asp-action="DeleteConfirmed" method="post">
     <input type="hidden" asp-for="Id" />
-    <p>Are you sure you want to delete @Model.Name?</p>
-    <button type="submit" class="btn btn-danger">Delete</button>
+    <p>Bạn có muốn xóa sản phẩm @Model.Name?</p>
+    <button type="submit" class="btn btn-danger">Xóa</button>
 </form>

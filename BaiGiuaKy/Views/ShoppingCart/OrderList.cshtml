@@ -12,10 +12,10 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>DiscountPercent</th>
-                <th>Total Price</th>
+                <th>Mã đơn hàng</th>
+                <th>Ngày đặt</th>
+                <th>Phần trăm giảm giá</th>
+                <th>Tổng cộng</th>
                 <th></th>
             </tr>
         </thead>
@@ -29,7 +29,7 @@
                     <td>@order.TotalPrice.ToString("C")</td>
                     <td>
                         <!-- Link đến trang chi tiết đơn hàng -->
-                        <a href="@Url.Action("OrderDetails", "ShoppingCart", new { orderId = order.Id })">Details</a>
+                        <a href="@Url.Action("OrderDetails", "ShoppingCart", new { orderId = order.Id })">Chi tiết</a>
                     </td>
                 </tr>
             }

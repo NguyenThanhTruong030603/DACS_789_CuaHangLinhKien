@@ -1,4 +1,4 @@
-// SET THIS VARIABLE FOR DELAY, 1000 = 1 SECOND
+﻿// SET THIS VARIABLE FOR DELAY, 1000 = 1 SECOND
 var delayLength = 4000;
 	
 function doMove(panelWidth, tooFar) {

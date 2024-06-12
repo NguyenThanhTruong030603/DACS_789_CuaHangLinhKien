@@ -39,12 +39,12 @@
     
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Image</th>
-            <th>Category</th>
-            <th>Actions</th>
+            <th>Tên</th>
+            <th>Giá</th>
+            
+            <th>Hình ảnh</th>
+            <th>Loại sản phẩm</th>
+            <th>Hành động</th>
         </tr>
     </thead>
     <tbody>
@@ -53,7 +53,7 @@
             <tr>
                 <td>@product.Name</td>
                 <td>@product.Price</td>
-                <td>@product.Description</td>
+                
 
 
                 <td>
@@ -66,9 +66,9 @@
                 <td>@(product.Category != null ? product.Category.Name : "No Category")</td>
 
                 <td>
-                    <a asp-action="Display" asp-route-id="@product.Id" class="btn btn-primary"><i class="fa fa-eye"></i>View</a> |
-                            <a asp-action="Update" asp-route-id="@product.Id" class="btn btn-secondary"><i class="fa fa-pencil"></i>Edit</a> |
-                            <a asp-action="Delete" asp-route-id="@product.Id" class="btn btn-danger"><i class="fa fa-trash"></i>Delete</a>
+                    <a asp-action="Display" asp-route-id="@product.Id" class="btn btn-primary"><i class="fa fa-eye"></i>Xem</a> |
+                            <a asp-action="Update" asp-route-id="@product.Id" class="btn btn-secondary"><i class="fa fa-pencil"></i>Chỉnh sửa</a> |
+                            <a asp-action="Delete" asp-route-id="@product.Id" class="btn btn-danger"><i class="fa fa-trash"></i>Xóa</a>
 
                 </td>
             </tr>

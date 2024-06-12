@@ -4,30 +4,30 @@
     ViewData["Title"] = "Add Product";
 }
 
-<h2>Add Product</h2>
+<h2>Thêm sản phẩm</h2>
 
 <form asp-action="Add" method="post" enctype="multipart/form-data">
     <div class="form-group">
-        <label asp-for="Name"></label>
+        <label asp-for="Name">Tên</label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Price"></label>
+        <label asp-for="Price">Giá</label>
         <input asp-for="Price" class="form-control" />
         <span asp-validation-for="Price" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Description"></label>
+        <label asp-for="Description">Mô tả</label>
         <textarea asp-for="Description" class="form-control"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="CategoryId">Category</label>
+        <label asp-for="CategoryId">Loại sản phẩm</label>
         <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-control"></select>
     </div>
     <div class="form-group">
-        <label asp-for="ImageUrl">Product Image</label>
+        <label asp-for="ImageUrl">Hình ảnh</label>
         <input type="file" asp-for="ImageUrl" class="form-control" />
     </div>
     <button type="submit" class="btn btn-primary">Add</button>

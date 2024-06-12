@@ -15,7 +15,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		<script type="text/javascript" src="~/js/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="~/js/move-top.js"></script>
 		<script type="text/javascript" src="~/js/easing.js"></script>
-		<script type="text/javascript" src="~/js/startstop-slider.js"></script>
+		@* <script type="text/javascript" src="~/js/startstop-slider.js"></script> *@
 		<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 		<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
@@ -40,7 +40,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		
 			
 		
-	</div>
+	
 		<div class="wrap">
 			<div class="header">
 
@@ -100,31 +100,32 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 				<div class="header_bottom">
 					<div class="menu">
 						<ul>
-							<li class="active"><a href="/home">Home</a></li>
-							<li><a href="/home/about">About</a></li>
-							<li><a href="delivery.html">Delivery</a></li>
-							<li><a href="news.html">News</a></li>
-							<li><a href="/home/contact">Contact</a></li>
+							<li class="active"><a href="/home">Trang chủ</a></li>
+							<li><a href="/home/about">Giới thiệu</a></li>
+							@* <li><a href="delivery.html">Delivery</a></li>
+							<li><a href="news.html">News</a></li> *@
+							<li><a href="/home/contact">Liên hệ</a></li>
 							<div class="clear"></div>
 						</ul>
 					</div>
 					
 					<div class="clear"></div>
 				</div>
+			@RenderBody()
 			</div>
 
-			@RenderBody()
+			
 
 		</div>
 
 
-	<script type="text/javascript">
+	@* <script type="text/javascript">
 		$(document).ready(function () {
 			$().UItoTop({ easingType: 'easeOutQuart' });
 
 		});
 	</script>
-	<a href="#" id="toTop"><span id="toTopHover"> </span></a>
+	<a href="#" id="toTop"><span id="toTopHover"> </span></a> *@
 
 
 
