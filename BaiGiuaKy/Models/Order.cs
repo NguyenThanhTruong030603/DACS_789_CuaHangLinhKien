@@ -11,7 +11,9 @@ namespace BaiGiuaKy.Models
         public string UserId { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal TotalPrice { get; set; }
-        public string DiscountCode { get; set; }
+        public string? DiscountCode { get; set; }
+
+        public decimal? DiscountPercentage { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ giao hàng")]
         public string ShippingAddress { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập ghi chú")]

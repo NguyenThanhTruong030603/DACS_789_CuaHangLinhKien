@@ -89,12 +89,13 @@ namespace BaiGiuaKy.Controllers
 			order.UserId = user.Id;
 			order.OrderDate = DateTime.UtcNow;
 			order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
+            order.DiscountPercentage = 0;
 
-			if (!string.IsNullOrEmpty(cart.DiscountCode))
+            if (!string.IsNullOrEmpty(cart.DiscountCode))
 			{
 				order.TotalPrice = order.TotalPrice * (1 - cart.DiscountPercentage / 100);
 				order.DiscountCode = cart.DiscountCode;
-                
+                order.DiscountPercentage = cart.DiscountPercentage;
 			}
 
 			order.OrderDetails = cart.Items.Select(i => new OrderDetail

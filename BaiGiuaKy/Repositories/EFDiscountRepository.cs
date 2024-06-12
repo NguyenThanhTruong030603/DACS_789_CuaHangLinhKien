@@ -30,12 +30,20 @@ namespace BaiGiuaKy.Repositories
 
             public async Task AddAsync(Discount discount)
             {
+                if (await _context.Discounts.AnyAsync(d => d.Code == discount.Code))
+                {
+                    throw new InvalidOperationException("Mã giảm giá đã tồn tại.");
+                }
                 _context.Discounts.Add(discount);
                 await _context.SaveChangesAsync();
             }
 
             public async Task UpdateAsync(Discount discount)
             {
+                if (await _context.Discounts.AnyAsync(d => d.Code == discount.Code))
+                {
+                    throw new InvalidOperationException("Mã giảm giá đã tồn tại.");
+                }
                 _context.Discounts.Update(discount);
                 await _context.SaveChangesAsync();
             }

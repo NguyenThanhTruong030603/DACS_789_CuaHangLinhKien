@@ -44,6 +44,7 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet("Update/{id}")]
         public async Task<IActionResult> Update(int id)
         {
             var discount = await _discountRepository.GetByIdAsync(id);
@@ -54,24 +55,31 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
 
             return View(discount);
         }
-        // Xử lý cập nhật sản phẩm
-        [HttpPost]
+
+        // Handle the form submission to update the discount
+        [HttpPost("Update/{id}")]
         public async Task<IActionResult> Update(int id, Discount discount)
         {
             if (ModelState.IsValid)
             {
+                var existingDiscount = await _discountRepository.GetByIdAsync(id);
+                if (existingDiscount == null)
+                {
+                    return NotFound();
+                }
 
-                var existingDiscount = await _discountRepository.GetByIdAsync(id); // Giả định có phương thức GetByIdAsync
-
-                // Cập nhật các thông tin khác của sản phẩm
+                // Update the properties of the existing discount
+                existingDiscount.ExpirationDate = discount.ExpirationDate;
                 existingDiscount.Code = discount.Code;
+                existingDiscount.Percentage = discount.Percentage;
 
                 await _discountRepository.UpdateAsync(existingDiscount);
 
                 return RedirectToAction(nameof(Index));
             }
-            var discounts = await _discountRepository.GetAllAsync();
-            return View(discounts);
+
+            // If model state is invalid, return the view with the discount model
+            return View(discount);
         }
         [HttpGet]
         public IActionResult AutocompleteSearch(string term)
