@@ -6,7 +6,7 @@
     decimal total = Convert.ToDecimal(ViewData["Total"]);
 }
 
-<h1 class="text-center my-4">Đơn Hàng Chờ Xác Nhận</h1>
+<h1 class="text-center my-4">Đơn Hàng</h1>
 
 @using (Html.BeginForm("Search", "OrderListAdmin", FormMethod.Get))
 {
@@ -18,8 +18,20 @@
     </p>
 }
 
+<form asp-action="ThongKe" method="get">
+    <div class="form-group">
+        <label for="startDate">Ngày bắt đầu:</label>
+        <input type="date" id="startDate" name="startDate" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="endDate">Ngày kết thúc:</label>
+        <input type="date" id="endDate" name="endDate" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+</form>
+
 <div class="card-header">
-    <h3 class="card-title">Danh Sách Đơn Hàng</h3>
+    <h3 class="card-title">Danh Sách Đã Giao Thành Công</h3>
 </div>
 <!-- /.card-header -->
 <div class="card-body">
@@ -34,7 +46,7 @@
                 <th>Địa chỉ giao hàng</th>
                 <th>Ghi chú</th>
 
-                <th>Trạng thái</th>
+                
                 
             </tr>
         </thead>
@@ -50,19 +62,7 @@
                     <td>@order.ShippingAddress</td>
                     <td>@order.Notes</td>
 
-                    <td>
-                        <form asp-action="ChangeStatus" asp-controller="OrderListAdmin" method="post">
-                            <select name="newStatus">
-                               
-                                <option value="ĐãXácNhận">Đã xác nhận</option>
-                                <option value="ĐãGiao">Đã giao</option>
-                                <option value="ĐãGiaoThànhCông">Đã giao thành công</option>
-                                <option value="ĐãHủy">Đã hủy</option>
-                            </select>
-                            <input type="hidden" name="orderId" value="@order.Id" />
-                            <button type="submit">Thay đổi</button>
-                        </form>
-                    </td>
+                    
                     <td>
                         <!-- Link đến trang chi tiết đơn hàng -->
                         <a href="@Url.Action("OrderDetails", "OrderListAdmin", new { orderId = order.Id })">Chi tiết</a>

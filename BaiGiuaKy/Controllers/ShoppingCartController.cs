@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BaiGiuaKy.Service;
+using static BaiGiuaKy.Models.Order;
 
 namespace BaiGiuaKy.Controllers
 {
@@ -90,8 +91,8 @@ namespace BaiGiuaKy.Controllers
 			order.OrderDate = DateTime.UtcNow;
 			order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
             order.DiscountPercentage = 0;
-
-            if (!string.IsNullOrEmpty(cart.DiscountCode))
+			
+			if (!string.IsNullOrEmpty(cart.DiscountCode))
 			{
 				order.TotalPrice = order.TotalPrice * (1 - cart.DiscountPercentage / 100);
 				order.DiscountCode = cart.DiscountCode;
@@ -129,6 +130,7 @@ namespace BaiGiuaKy.Controllers
 			}
 			else
 			{
+				order.Status = OrderStatus.ChờXácNhận;
 				_context.Orders.Add(order);
 				await _context.SaveChangesAsync();
 				HttpContext.Session.Remove("Cart");
@@ -277,7 +279,8 @@ namespace BaiGiuaKy.Controllers
             order.PaymentMethod = paymentMethod;
             order.DiscountPercentage = 0;
 
-            if (!string.IsNullOrEmpty(cart.DiscountCode))
+			order.Status = OrderStatus.ChờXácNhận;
+			if (!string.IsNullOrEmpty(cart.DiscountCode))
             {
                
                 order.DiscountCode = cart.DiscountCode;

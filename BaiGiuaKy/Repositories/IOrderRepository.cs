@@ -8,7 +8,9 @@ namespace BaiGiuaKy.Repositories
         Task<IEnumerable<Order>> GetAllAsync();
 
         Task<Order> GetByIdAsync(int id);
+        Task<List<Order>> GetOrdersByStatusAsync(OrderStatus status);
         Task DeleteAsync(int id);
         Task<List<Order>> SearchAsync(string searchString);
+        Task UpdateAsync(Order order);
     }
 }

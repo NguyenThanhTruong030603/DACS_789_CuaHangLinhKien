@@ -11,7 +11,7 @@ using static NuGet.Packaging.PackagingConstants;
 namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+    [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
     public class UsersController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -108,6 +108,7 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
             return View("Index", await users.ToPagedListAsync(pageNumber, pageSize));
         }
         [HttpPost]
+        [Authorize(Roles = SD.Role_Admin)]
         public async Task<IActionResult> UnblockAccount(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);

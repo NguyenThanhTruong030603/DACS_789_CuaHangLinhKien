@@ -27,6 +27,20 @@ namespace BaiGiuaKy.Repositories
             return await _context.Orders.Include(p => p.OrderDetails).FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<List<Order>> GetOrdersByStatusAsync(OrderStatus status)
+        {
+            // Lấy danh sách các đơn hàng từ database có trạng thái bằng với trạng thái được chỉ định
+            var orders = await _context.Orders
+                .Where(o => o.Status == status)
+                .ToListAsync();
+
+            return orders;
+        }
+        public async Task UpdateAsync(Order order)
+        {
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+        }
         public async Task DeleteAsync(int id)
         {
             var Order = await _context.Orders.FindAsync(id);

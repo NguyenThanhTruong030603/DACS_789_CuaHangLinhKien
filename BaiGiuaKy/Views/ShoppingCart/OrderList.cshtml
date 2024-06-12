@@ -5,7 +5,7 @@
     ViewData["Title"] = "Order List";
 }
 
-<h2>Your Order History</h2>
+<h2>lịch Sử Đơn Hàng</h2>
 
 @if (Model != null && Model.Any())
 {
@@ -16,6 +16,7 @@
                 <th>Ngày đặt</th>
                 <th>Phần trăm giảm giá</th>
                 <th>Tổng cộng</th>
+                <th>Trạng thái</th>
                 <th></th>
             </tr>
         </thead>
@@ -26,7 +27,8 @@
                     <td>@order.Id</td>
                     <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
                     <td>@order.DiscountPercentage</td>
-                    <td>@order.TotalPrice.ToString("C")</td>
+                    <td>@order.TotalPrice VND</td>
+                    <td>@GetOrderStatusText(order.Status)</td>
                     <td>
                         <!-- Link đến trang chi tiết đơn hàng -->
                         <a href="@Url.Action("OrderDetails", "ShoppingCart", new { orderId = order.Id })">Chi tiết</a>
@@ -43,3 +45,24 @@ else
 <div class="card-footer text-muted text-center">
     <a asp-action="Index" class="btn btn-outline-primary">Quay lại </a>
 </div>
+
+@functions {
+    public string GetOrderStatusText(OrderStatus status)
+    {
+        switch (status)
+        {
+            case OrderStatus.ChờXácNhận:
+                return "Chờ xác nhận";
+            case OrderStatus.ĐãXácNhận:
+                return "Đã xác nhận";
+            case OrderStatus.ĐãGiao:
+                return "Đang giao hàng";
+            case OrderStatus.ĐãGiaoThànhCông:
+                return "Đã giao thành công";
+            case OrderStatus.ĐãHủy:
+                return "Đã hủy";
+            default:
+                return "";
+        }
+    }
+}

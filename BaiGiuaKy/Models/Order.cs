@@ -5,9 +5,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BaiGiuaKy.Models
 {
+    public enum OrderStatus
+    {
+        ChờXácNhận,
+        ĐãXácNhận,
+        ĐãGiao,
+        ĐãGiaoThànhCông,
+        ĐãHủy
+    }
     public class Order
     {
-        public int Id { get; set; }
+		
+		public int Id { get; set; }
         public string UserId { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal TotalPrice { get; set; }
@@ -24,5 +33,6 @@ namespace BaiGiuaKy.Models
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
-    }
+		public OrderStatus Status { get; set; }
+	}
 }

@@ -105,46 +105,95 @@ namespace BaiGiuaKy.Areas.Identity.Pages.Account
 
 		public async Task<IActionResult> OnPostAsync(string returnUrl = null)
 		{
-			returnUrl ??= Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
 
-			ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-			if (ModelState.IsValid)
-			{
-				// This doesn't count login failures towards account lockout
-				// To enable password failures to trigger account lockout, set lockoutOnFailure: true
-				var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-				;
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
                 var user = await _userManager.FindByEmailAsync(Input.Email);
                 if (user != null && user.IsBlocked)
                 {
-                    // Tài khoản bị chặn, lưu thông báo và chuyển hướng đến trang đăng nhập
                     TempData["ErrorMessage"] = "Tài khoản của bạn đã bị chặn.";
                     return RedirectToPage();
                 }
-                if (result.Succeeded)
-				{
-					_logger.LogInformation("User logged in.");
-					return LocalRedirect(returnUrl);
-				}
-				if (result.RequiresTwoFactor)
-				{
-					return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-				}
-				if (result.IsLockedOut)
-				{
-					_logger.LogWarning("User account locked out.");
-					return RedirectToPage("./Lockout");
-				}
-				else
-				{
-					ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-					return Page();
-				}
-			}
 
-			// If we got this far, something failed, redisplay form
-			return Page();
-		}
+                if (result.Succeeded)
+                {
+                    // Kiểm tra vai trò của người dùng
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles.Contains("Admin") || roles.Contains("Employee"))
+                    {
+                        returnUrl = Url.Content("~/Admin");
+                    }
+
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl);
+                }
+                if (result.RequiresTwoFactor)
+                {
+                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                }
+                if (result.IsLockedOut)
+                {
+                    _logger.LogWarning("User account locked out.");
+                    return RedirectToPage("./Lockout");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return Page();
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return Page(); returnUrl ??= Url.Content("~/");
+
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user != null && user.IsBlocked)
+                {
+                    TempData["ErrorMessage"] = "Tài khoản của bạn đã bị chặn.";
+                    return RedirectToPage();
+                }
+
+                if (result.Succeeded)
+                {
+                    // Kiểm tra vai trò của người dùng
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles.Contains("Admin") || roles.Contains("Employee"))
+                    {
+                        returnUrl = Url.Content("~/Admin");
+                    }
+
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl);
+                }
+                if (result.RequiresTwoFactor)
+                {
+                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                }
+                if (result.IsLockedOut)
+                {
+                    _logger.LogWarning("User account locked out.");
+                    return RedirectToPage("./Lockout");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return Page();
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return Page();
+        }
 	}
 }
