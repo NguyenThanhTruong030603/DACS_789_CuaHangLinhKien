@@ -29,6 +29,24 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
                 .ToList();
             return Ok(user);
         }
+
+        
+
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin)]
+        public async Task<IActionResult> BlockAccount(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.IsBlocked = true;
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction("Index");
+        }
         public async Task<IActionResult> Index(int? page)
         {
             var users = await _userManager.Users.ToListAsync();
@@ -89,6 +107,20 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
             // Trả về view "Index" với danh sách người dùng đã lọc và phân trang
             return View("Index", await users.ToPagedListAsync(pageNumber, pageSize));
         }
+        [HttpPost]
+        public async Task<IActionResult> UnblockAccount(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
+            user.IsBlocked = false;
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction("Index");
+        }
+       
     }
 }
