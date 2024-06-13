@@ -19,7 +19,12 @@ namespace BaiGiuaKy.Repositories
             .Include(p => p.OrderDetails) // Include thông tin về category
             .ToListAsync();
         }
-
+        public async Task<IEnumerable<Order>> GetOrdersByStatusAsync2(OrderStatus status)
+        {
+            return await _context.Orders
+                .Where(o => o.Status == status)
+                .ToListAsync();
+        }
         public async Task<Order> GetByIdAsync(int id)
         {
             // return await _context.Products.FindAsync(id);

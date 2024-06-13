@@ -282,7 +282,7 @@ namespace BaiGiuaKy.Controllers
 			order.Status = OrderStatus.ChờXácNhận;
 			if (!string.IsNullOrEmpty(cart.DiscountCode))
             {
-               
+                order.TotalPrice = order.TotalPrice * (1 - cart.DiscountPercentage / 100);
                 order.DiscountCode = cart.DiscountCode;
                 order.DiscountPercentage = cart.DiscountPercentage;
             }

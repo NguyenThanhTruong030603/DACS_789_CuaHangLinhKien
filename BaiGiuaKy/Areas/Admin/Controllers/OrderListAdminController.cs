@@ -157,7 +157,7 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
         {
             ViewData["Title"] = "Tìm kiếm";
 
-            var orders = await _orderRepository.GetAllAsync();
+            var orders = await _orderRepository.GetOrdersByStatusAsync2(OrderStatus.ĐãGiaoThànhCông);
 
             // Lọc đơn hàng theo ngày tháng năm
             orders = orders.Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate);
@@ -170,15 +170,43 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
 
             return View("IndexGiaoThanhCong", await orders.ToPagedListAsync(pageNumber, pageSize));
         }
-        
-        public async Task<IActionResult> Search(string searchString, int? page)
+
+        public async Task<IActionResult> Search(string searchString, int? page, string viewName)
         {
             ViewData["Title"] = "Tìm kiếm";
 
             // Retrieve the search string from TempData if available
             searchString = searchString ?? TempData["SearchString"] as string;
 
-            var orders = await _orderRepository.GetAllAsync();
+            // Kiểm tra viewName và lấy danh sách đơn hàng tương ứng
+            IEnumerable<Order> orders;
+
+            if (viewName == "Index")
+            {
+                orders = await _orderRepository.GetOrdersByStatusAsync(OrderStatus.ChờXácNhận);
+            }
+            else if (viewName == "IndexGiaoThanhCong")
+            {
+                orders = await _orderRepository.GetOrdersByStatusAsync(OrderStatus.ĐãGiaoThànhCông);
+            }
+            else if (viewName == "IndexXacNhan")
+            {
+                orders = await _orderRepository.GetOrdersByStatusAsync(OrderStatus.ĐãXácNhận);
+            }
+            else if (viewName == "IndexHuy")
+            {
+                orders = await _orderRepository.GetOrdersByStatusAsync(OrderStatus.ĐãHủy);
+            }
+            else if (viewName == "IndexDangGiao")
+            {
+                orders = await _orderRepository.GetOrdersByStatusAsync(OrderStatus.ĐãGiao);
+            }
+            else
+            {
+                // Trường hợp viewName không xác định, xử lý lỗi hoặc mặc định là Index
+                orders = await _orderRepository.GetOrdersByStatusAsync(OrderStatus.ChờXácNhận);
+                viewName = "Index"; // Đặt viewName mặc định là Index
+            }
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -193,7 +221,7 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
             // Store the search string in TempData for subsequent requests
             TempData["SearchString"] = searchString;
 
-            return View("IndexGiaoThanh", await orders.ToPagedListAsync(pageNumber, pageSize));
+            return View(viewName, await orders.ToPagedListAsync(pageNumber, pageSize));
         }
 
         public async Task<IActionResult> OrderDetails(int orderId)

@@ -111,14 +111,18 @@ namespace BaiGiuaKy.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-
+                // Tìm người dùng dựa trên email
                 var user = await _userManager.FindByEmailAsync(Input.Email);
+
+                // Kiểm tra nếu tài khoản bị chặn
                 if (user != null && user.IsBlocked)
                 {
                     TempData["ErrorMessage"] = "Tài khoản của bạn đã bị chặn.";
                     return RedirectToPage();
                 }
+
+                // Thực hiện đăng nhập
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
@@ -148,52 +152,10 @@ namespace BaiGiuaKy.Areas.Identity.Pages.Account
                 }
             }
 
-            // If we got this far, something failed, redisplay form
-            return Page(); returnUrl ??= Url.Content("~/");
-
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-            if (ModelState.IsValid)
-            {
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-
-                var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user != null && user.IsBlocked)
-                {
-                    TempData["ErrorMessage"] = "Tài khoản của bạn đã bị chặn.";
-                    return RedirectToPage();
-                }
-
-                if (result.Succeeded)
-                {
-                    // Kiểm tra vai trò của người dùng
-                    var roles = await _userManager.GetRolesAsync(user);
-                    if (roles.Contains("Admin") || roles.Contains("Employee"))
-                    {
-                        returnUrl = Url.Content("~/Admin");
-                    }
-
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
-                }
-            }
-
-            // If we got this far, something failed, redisplay form
+            // Nếu chúng ta đến được đây, có gì đó thất bại, hiển thị lại form
             return Page();
+
+
         }
 	}
 }

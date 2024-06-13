@@ -1,4 +1,4 @@
-using System.Diagnostics;
+ï»¿using System.Diagnostics;
 using BaiGiuaKy.Models;
 using BaiGiuaKy.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -77,9 +77,9 @@ namespace BaiGiuaKy.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Search(string searchString, int? page)
         {
-            ViewData["Title"] = "Tìm ki?m";
+            ViewData["Title"] = "TÃ¬m ki?m";
 
-            //Truy xu?t chu?i tìm ki?m t? TempData n?u có s?n.
+            //Truy xu?t chu?i tÃ¬m ki?m t? TempData n?u cÃ³ s?n.
             searchString = searchString ?? TempData["SearchString"] as string;
 
             var products = await _productRepository.GetAllAsync();
@@ -100,7 +100,7 @@ namespace BaiGiuaKy.Controllers
 
         public async Task<IActionResult> ShowProductsByCategory(int categoryId, int? page)
         {
-            ViewData["Title"] = "S?n ph?m theo lo?i";
+            ViewData["Title"] = "San pham theo loai";
 
             // L?y t?t c? s?n ph?m thu?c lo?i ???c ch? ??nh
             var products = await _productRepository.GetAllAsync();
