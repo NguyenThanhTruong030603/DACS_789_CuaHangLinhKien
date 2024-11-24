@@ -61,8 +61,8 @@
                             </div>
                             <div class="totals">
                                 <p class="mb-2"><strong>Tổng tạm tính:</strong> <span id="totalPriceValue" class="font-weight-bold text-danger">@total</span> VNĐ</p>
-                                <p class="mb-2"><strong>Giảm giá (<span class="font-weight-bold">@discountPercentage%</span>):</strong> <span id="discountAmount" class="text-success font-weight-bold">-@discountAmount.ToString("C")</span></p>
-                                <p class="mb-2"><strong>Thành tiền:</strong> <span id="finalPriceValue" class="text-primary font-weight-bold">@finalPrice.ToString("C")</span></p>
+                                <p class="mb-2"><strong>Giảm giá (<span class="font-weight-bold">@discountPercentage%</span>):</strong> <span id="discountAmount" class="text-success font-weight-bold">-@discountAmount</span></p>
+                                <p class="mb-2"><strong>Thành tiền:</strong> <span id="finalPriceValue" class="text-primary font-weight-bold">@finalPrice</span></p>
                             </div>
                         </div>
                     </td>
@@ -144,7 +144,7 @@
     </script>
 }
 
-<style>
+@* <style>
     .summary-section {
         margin-top: 20px;
     }
@@ -181,4 +181,4 @@
         .totals p {
             margin: 0;
         }
-</style>
+</style> *@

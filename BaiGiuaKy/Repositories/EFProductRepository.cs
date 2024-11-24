@@ -12,7 +12,7 @@ namespace BaiGiuaKy.Repositories
         {
             _context = context;
         }
-
+        
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
             // return await _context.Products.ToListAsync();

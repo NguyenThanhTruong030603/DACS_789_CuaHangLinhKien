@@ -1,0 +1,76 @@
+﻿@model IEnumerable<BaiGiuaKy.Models.Product>
+
+
+
+<h2 class="text-center">Xây dựng PC của bạn</h2>
+
+<div class="container">
+    <form id="buildPcForm" asp-controller="ShoppingCart" asp-action="AddSelectedProducts" method="post">
+        <div class="row">
+            <div class="col-md-12">
+                <label>RAM:</label>
+                <select id="ramSelect" name="selectedProducts" class="form-control">
+                    <option value="">-- Chọn RAM --</option>
+                    @foreach (var ram in Model.Where(p => p.CategoryId == 1)) // CategoryId = 1 là RAM
+                    {
+                        <option value="@ram.Id">@ram.Name - @ram.Price.ToString("C")</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <label>CPU:</label>
+                <select id="cpuSelect" name="selectedProducts" class="form-control">
+                    <option value="">-- Chọn CPU --</option>
+                    @foreach (var cpu in Model.Where(p => p.CategoryId == 2)) // CategoryId = 2 là CPU
+                    {
+                        <option value="@cpu.Id">@cpu.Name - @cpu.Price.ToString("C")</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <label>CASE:</label>
+                <select id="caseSelect" name="selectedProducts" class="form-control">
+                    <option value="">-- Chọn CASE --</option>
+                    @foreach (var caseProduct in Model.Where(p => p.CategoryId == 3)) // CategoryId = 3 là CASE
+                    {
+                        <option value="@caseProduct.Id">@caseProduct.Name - @caseProduct.Price.ToString("C")</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Thêm các danh mục khác ở đây như VGA, Mainboard, PSU -->
+        
+        <div class="row mt-3">
+            <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-success">Thêm tất cả vào giỏ hàng</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    <script>
+        async function getProductsByCategory(categoryId) {
+            if (categoryId) {
+                const response = await fetch(`/Home/ShowProductsByCategory?categoryId=${categoryId}`);
+                const products = await response.json();
+                const productListDiv = document.getElementById("productList");
+                productListDiv.innerHTML = "";
+
+                products.forEach(product => {
+                    productListDiv.innerHTML += `<div>${product.Name} - ${product.Price.toLocaleString('vi-VN')} VNĐ</div>`;
+                });
+            } else {
+                document.getElementById("productList").innerHTML = "";
+            }
+        }
+    </script>
+}

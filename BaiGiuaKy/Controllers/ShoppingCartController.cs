@@ -50,7 +50,40 @@ namespace BaiGiuaKy.Controllers
 			TempData["SuccessMessage"] = "Discount applied successfully!";
 			return RedirectToAction("Index");
 		}
-		public IActionResult Checkout()
+
+        [HttpPost]
+        public IActionResult AddSelectedProducts(List<int> selectedProducts)
+        {
+            if (selectedProducts == null || !selectedProducts.Any())
+            {
+                TempData["Error"] = "Vui lòng chọn ít nhất một sản phẩm.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+
+            foreach (var productId in selectedProducts)
+            {
+                var product = _context.Products.FirstOrDefault(p => p.Id == productId);
+                if (product != null)
+                {
+                    var cartItem = new CartItem
+                    {
+                        ProductId = product.Id,
+                        Name = product.Name,
+                        Price = product.Price,
+                        Quantity = 1 // Mặc định số lượng là 1, có thể tuỳ chỉnh
+                    };
+                    cart.AddItem(cartItem);
+                }
+            }
+
+            HttpContext.Session.SetObjectAsJson("Cart", cart);
+            TempData["SuccessMessage"] = "Các sản phẩm đã được thêm vào giỏ hàng.";
+            return RedirectToAction("Index", "ShoppingCart");
+        }
+
+        public IActionResult Checkout()
         {
 			var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
 			if (cart == null || !cart.Items.Any())
@@ -138,9 +171,9 @@ namespace BaiGiuaKy.Controllers
 			}
 		}
 
+        
 
-
-		public IActionResult AddToCart(int productId, int quantity)
+        public IActionResult AddToCart(int productId, int quantity)
         {
             // Lấy thông tin sản phẩm từ cơ sở dữ liệu
             var product = _context.Products.FirstOrDefault(p => p.Id == productId);

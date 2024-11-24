@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 using System;
 using BaiGiuaKy.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace BaiGiuaKy.Controllers
 {
@@ -16,11 +17,12 @@ namespace BaiGiuaKy.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly ApplicationDbContext _context;
-
-        public HomeController(IProductRepository productRepository, ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public HomeController(IProductRepository productRepository, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _productRepository = productRepository;
             _context = context;
+            _userManager = userManager;
         }
         [HttpGet]
         public IActionResult AutocompleteSearch(string term)
@@ -54,14 +56,20 @@ namespace BaiGiuaKy.Controllers
 			return View();
 		}
 
-		[AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IActionResult> Display(int id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            ViewData["UserManager"] = _userManager;
+            var product = await _context.Products
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.User)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
             if (product == null)
             {
                 return NotFound();
             }
+
             return View(product);
         }
         public IActionResult Privacy()
@@ -111,6 +119,95 @@ namespace BaiGiuaKy.Controllers
 
             return View("Index", await products.ToPagedListAsync(pageNumber, pageSize));
         }
+        public async Task<IActionResult> BuildPC()
+        {
+            // Lấy tất cả sản phẩm từ cơ sở dữ liệu
+            var product = await _productRepository.GetAllAsync();
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
+            return View(product);
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> ShowProductsByCategory(int categoryId)
+        {
+            // Lấy sản phẩm theo categoryId từ cơ sở dữ liệu
+            var filteredProducts = await _productRepository.GetAllAsync();
+            var result = filteredProducts.Where(p => p.CategoryId == categoryId).ToList();
+            return Json(result);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int productId, string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                ModelState.AddModelError("", "Nội dung bình luận không được để trống.");
+                return RedirectToAction("Display", new { id = productId });
+            }
+
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var comment = new Comment
+            {
+                ProductId = productId,
+                UserId = userId,
+                Content = content,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Display", new { id = productId });
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditComment(int commentId, string content)
+        {
+            var comment = await _context.Comments.FindAsync(commentId);
+
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            // Kiểm tra nếu người dùng đã đăng nhập và là chủ sở hữu bình luận
+            if (!User.Identity.IsAuthenticated || comment.UserId != _userManager.GetUserId(User))
+            {
+                return Unauthorized();
+            }
+
+            // Cập nhật nội dung bình luận
+            comment.Content = content;
+            _context.Comments.Update(comment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Display", new { id = comment.ProductId });
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteComment(int commentId)
+        {
+            var comment = await _context.Comments.FindAsync(commentId);
+
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            // Kiểm tra nếu người dùng đã đăng nhập và là chủ sở hữu bình luận
+            if (!User.Identity.IsAuthenticated || comment.UserId != _userManager.GetUserId(User))
+            {
+                return Unauthorized();
+            }
+
+            // Xóa bình luận
+            _context.Comments.Remove(comment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Display", new { id = comment.ProductId });
+        }
     }
 }

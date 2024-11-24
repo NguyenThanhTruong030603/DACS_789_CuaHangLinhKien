@@ -18,20 +18,7 @@
     ViewData["Title"] = "Trang Chủ";
 }
 
-@using (Html.BeginForm("Search", "Home", FormMethod.Get))
-{
-    <div class="header_bottom d-flex justify-content-end align-items-center">
-        <div class="input-group input-group-sm">
-            <input type="text" id="autocomplete" name="searchString" class="form-control rounded-end" style="width: 200px;" placeholder="Tìm kiếm" aria-label="Tìm kiếm" aria-describedby="search-addon">
-            <button type="submit" class="btn btn-outline-primary rounded-start"><i class="bi bi-search"></i></button>
-        </div>
-        <a href="@Url.Action("Index", "ShoppingCart")" class="btn btn-outline-light ms-3">
-            <i class="bi-cart-fill me-1"></i>
-            Giỏ hàng
-            <span class="badge bg-secondary">@ViewBag.CartItemCount</span>
-        </a>
-    </div>
-}
+
 
 
 
@@ -42,11 +29,11 @@
         <div class="categories">
             <ul>
                 <h3>Danh mục sản phẩm</h3>
-                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 1 })">Loại 1</a></li>
-                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 2 })">Loại 2</a></li>
-                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 3 })">Loại 3</a></li>
-                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 4 })">Loại 4</a></li>
-                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 5 })">Loại 5</a></li>
+                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 1 })">RAM</a></li>
+                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 2 })">CPU</a></li>
+                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 3 })">CASE</a></li>
+                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 4 })">VGA</a></li>
+                <li><a href="@Url.Action("ShowProductsByCategory", "Home", new { categoryId = 5 })">MAINBOARD</a></li>
             </ul>
         </div>
     </div>

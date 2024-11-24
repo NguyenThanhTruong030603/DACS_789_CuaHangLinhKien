@@ -25,7 +25,7 @@ using BaiGiuaKy.Models;
 namespace BaiGiuaKy.Areas.Admin.Pages.Account
 {
     [Area("Admin")]
-    [Authorize(Roles = SD.Role_Admin)]
+  //  [Authorize(Roles = SD.Role_Admin)]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -121,7 +121,7 @@ namespace BaiGiuaKy.Areas.Admin.Pages.Account
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Company)).GetAwaiter().GetResult();
+                
             }
             Input = new()
             {
