@@ -60,40 +60,48 @@ else
     </div>
     <div class="card-body">
         @if (Model.Comments != null && Model.Comments.Any())
+        {
+            foreach (var comment in Model.Comments)
             {
-        @foreach (var comment in Model.Comments)
+                // Kiểm tra nếu người dùng bị block, không hiển thị bình luận
+                if (comment.User != null && comment.User.IsBlocked)
                 {
-        <div class="mb-3" style="position: relative;">
-            <strong>@comment.User.UserName</strong> - <small>@comment.CreatedAt.ToLocalTime()</small>
-            <p>@comment.Content</p>
-
-            @if (User.Identity.IsAuthenticated && comment.UserId == userManager.GetUserId(User))
-                        {
-            <div class="comment-actions" style="position: absolute; top: 10px; right: 10px;">
-                <button class="btn btn-warning btn-sm edit-comment-btn" onclick="showEditForm('@comment.Id', '@comment.Content')">Sửa</button>
-                <button class="btn btn-danger btn-sm delete-comment-btn" onclick="showDeleteConfirmation('@comment.Id')">Xóa</button>
-            </div>
-
- <!-- Edit Comment Form (Initially Hidden) -->
-            <div id="edit-comment-form-@comment.Id" class="edit-comment-form" style="display: none;">
-                <form asp-action="EditComment" method="post">
-                    <input type="hidden" name="commentId" value="@comment.Id" />
-                    <textarea class="form-control" name="content" rows="3" required>@comment.Content</textarea>
-                    <button type="submit" class="btn btn-success mt-2">Chỉnh sửa</button>
-                    <button type="button" class="btn btn-secondary mt-2" onclick="hideEditForm('@comment.Id')">Hủy</button>
-                </form>
-            </div>
-                        }
-        </div>
+                    continue;
                 }
+
+                <div class="mb-3" style="position: relative;">
+                    <strong>@comment.User.UserName</strong> -
+                    <small>@comment.CreatedAt.ToLocalTime()</small>
+                    <p>@comment.Content</p>
+
+                    @if (User.Identity.IsAuthenticated &&
+                   (User.IsInRole("Admin") || User.IsInRole("Employee") || comment.UserId == userManager.GetUserId(User)))
+                    {
+                        <div class="comment-actions" style="position: absolute; top: 10px; right: 10px;">
+                            <button class="btn btn-warning btn-sm edit-comment-btn" onclick="showEditForm('@comment.Id', '@comment.Content')">Sửa</button>
+                            <button class="btn btn-danger btn-sm delete-comment-btn" onclick="showDeleteConfirmation('@comment.Id')">Xóa</button>
+                        </div>
+
+                        <!-- Edit Comment Form (Initially Hidden) -->
+                        <div id="edit-comment-form-@comment.Id" class="edit-comment-form" style="display: none;">
+                            <form asp-action="EditComment" method="post">
+                                <input type="hidden" name="commentId" value="@comment.Id" />
+                                <textarea class="form-control" name="content" rows="3" required>@comment.Content</textarea>
+                                <button type="submit" class="btn btn-success mt-2">Chỉnh sửa</button>
+                                <button type="button" class="btn btn-secondary mt-2" onclick="hideEditForm('@comment.Id')">Hủy</button>
+                            </form>
+                        </div>
+                    }
+                </div>
             }
-            else
-            {
-        <p>Chưa có bình luận nào cho sản phẩm này.</p>
-            }
+        }
+        else
+        {
+            <p>Chưa có bình luận nào cho sản phẩm này.</p>
+        }
     </div>
 </div>
-</div>
+
 
 <!-- Modal for Delete Confirmation -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">

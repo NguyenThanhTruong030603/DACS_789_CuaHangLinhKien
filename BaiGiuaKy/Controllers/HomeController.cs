@@ -174,14 +174,15 @@ namespace BaiGiuaKy.Controllers
                 return NotFound();
             }
 
-            // Kiểm tra nếu người dùng đã đăng nhập và là chủ sở hữu bình luận
-            if (!User.Identity.IsAuthenticated || comment.UserId != _userManager.GetUserId(User))
-            {
-                return Unauthorized();
-            }
+			// Kiểm tra nếu người dùng đã đăng nhập và là chủ sở hữu bình luận
+			if (!User.Identity.IsAuthenticated ||
+	 (!User.IsInRole("Admin") && !User.IsInRole("Employee") && comment.UserId != _userManager.GetUserId(User)))
+			{
+				return Unauthorized();
+			}
 
-            // Cập nhật nội dung bình luận
-            comment.Content = content;
+			// Cập nhật nội dung bình luận
+			comment.Content = content;
             _context.Comments.Update(comment);
             await _context.SaveChangesAsync();
 
@@ -197,14 +198,14 @@ namespace BaiGiuaKy.Controllers
                 return NotFound();
             }
 
-            // Kiểm tra nếu người dùng đã đăng nhập và là chủ sở hữu bình luận
-            if (!User.Identity.IsAuthenticated || comment.UserId != _userManager.GetUserId(User))
-            {
-                return Unauthorized();
-            }
+			if (!User.Identity.IsAuthenticated ||
+	  (!User.IsInRole("Admin") && !User.IsInRole("Employee") && comment.UserId != _userManager.GetUserId(User)))
+			{
+				return Unauthorized();
+			}
 
-            // Xóa bình luận
-            _context.Comments.Remove(comment);
+			// Xóa bình luận
+			_context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Display", new { id = comment.ProductId });
