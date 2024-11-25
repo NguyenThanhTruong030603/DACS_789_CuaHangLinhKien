@@ -1,0 +1,49 @@
+﻿<div id="chatButton" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background-color: #007bff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; cursor: pointer; z-index: 1000;">
+    💬
+</div>
+
+<div id="chatContainer" style="display: none; position: fixed; bottom: 80px; right: 20px; border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 300px; background-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">
+    <div id="messagesList" style="height: 200px; overflow-y: auto; border: 1px solid #ddd; margin-bottom: 10px; padding: 5px;"></div>
+    <textarea id="messageInput" placeholder="Nhập tin nhắn..." style="width: 100%; height: 50px; resize: none;"></textarea>
+    <button id="sendMessageButton" style="width: 100%; background-color: #007bff; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer;">Send</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.19/signalr.min.js"></script>
+<script>
+    // Kết nối tới SignalR Hub
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chathub")  // Địa chỉ của SignalR Hub
+        .build();
+
+    // Lắng nghe sự kiện 'ReceiveMessage' từ server
+    connection.on("ReceiveMessage", function (user, message) {
+        const msg = `${user}: ${message}`;
+        const msgElement = document.createElement("div");
+        msgElement.textContent = msg;
+        document.getElementById("messagesList").appendChild(msgElement);
+        // Tự động cuộn xuống cuối danh sách
+        const messagesList = document.getElementById("messagesList");
+        messagesList.scrollTop = messagesList.scrollHeight;
+    });
+
+    // Bắt đầu kết nối SignalR
+    connection.start().catch(err => console.error(err.toString()));
+
+    // Gửi tin nhắn khi nhấn nút
+    document.getElementById("sendMessageButton").addEventListener("click", function () {
+        const message = document.getElementById("messageInput").value;
+        const user = "Customer"; // Thay bằng tên người dùng hiện tại nếu có
+        connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+        document.getElementById("messageInput").value = ''; // Xóa nội dung ô nhập sau khi gửi
+    });
+
+    // Hiện/ẩn hộp chat khi nhấn nút tròn
+    document.getElementById("chatButton").addEventListener("click", function () {
+        const chatContainer = document.getElementById("chatContainer");
+        if (chatContainer.style.display === "none" || chatContainer.style.display === "") {
+            chatContainer.style.display = "block";
+        } else {
+            chatContainer.style.display = "none";
+        }
+    });
+</script>

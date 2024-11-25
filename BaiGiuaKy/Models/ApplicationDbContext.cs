@@ -1,4 +1,5 @@
-﻿using BaiGiuaKy.Models;
+﻿
+using BaiGiuaKy.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -13,7 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<OrderDetail> OrderDetails { get; set; }
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<Comment> Comments { get; set; } // Thêm bảng Comment
-
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

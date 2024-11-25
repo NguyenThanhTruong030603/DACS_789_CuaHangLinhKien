@@ -8,7 +8,7 @@ using BaiGiuaKy.Service;
 using Microsoft.AspNetCore.Authentication.Google;
 using System.Configuration;
 using BaiGiuaKy.Repositories.BaiGiuaKy.Repositories;
-
+using BaiGiuaky.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -49,8 +49,9 @@ builder.Services.AddAuthentication().AddGoogle(googleoptions =>
 	googleoptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
 
 });
+builder.Services.AddSignalR();
 var app = builder.Build();
-
+app.MapHub<ChatHub>("/chathub");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
