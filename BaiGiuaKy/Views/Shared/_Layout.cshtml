@@ -138,6 +138,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
             </div>
             @RenderBody()
             <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+
             <!-- Nút chat chính -->
             <div id="chatButton" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background-color: #007bff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; cursor: pointer; z-index: 1000;">
                 💬
@@ -170,67 +171,87 @@ License URL: http://creativecommons.org/licenses/by/3.0/
             <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.19/signalr.min.js"></script>
 
             <script>
-                // Kết nối tới SignalR Hub
-                const connection = new signalR.HubConnectionBuilder()
-                    .withUrl("/chathub")  // Địa chỉ của SignalR Hub
-                    .build();
+// Kiểm tra trạng thái đăng nhập từ server
+const isAuthenticated = '@User.Identity.IsAuthenticated ? "true" : "false"';
 
-                // Lắng nghe sự kiện 'ReceiveMessage' từ server
-                connection.on("ReceiveMessage", function (user, message) {
-                    const msg = `${user}: ${message}`;
-                    const msgElement = document.createElement("div");
-                    msgElement.textContent = msg;
-                    document.getElementById("messagesList").appendChild(msgElement);
-                    // Tự động cuộn xuống cuối danh sách
-                    const messagesList = document.getElementById("messagesList");
-                    messagesList.scrollTop = messagesList.scrollHeight;
-                });
+// Nếu người dùng chưa đăng nhập, hiển thị cảnh báo và không cho phép chat
+if (isAuthenticated === "false") {
+    alert("Bạn cần đăng nhập để sử dụng tính năng chat.");
+}
 
-                // Bắt đầu kết nối SignalR
-                connection.start().catch(err => console.error(err.toString()));
+// Kết nối tới SignalR Hub
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/chathub")  // Địa chỉ của SignalR Hub
+    .build();
 
-                // Gửi tin nhắn khi nhấn nút
-                document.getElementById("sendMessageButton").addEventListener("click", function () {
-                    const message = document.getElementById("messageInput").value;
-                    const user = "Customer"; // Thay bằng tên người dùng hiện tại nếu có
-                    connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
-                    document.getElementById("messageInput").value = ''; // Xóa nội dung ô nhập sau khi gửi
-                });
+// Lắng nghe sự kiện 'ReceiveMessage' từ server
+connection.on("ReceiveMessage", function (user, message) {
+    const msg = `${user}: ${message}`;
+    const msgElement = document.createElement("div");
+    msgElement.textContent = msg;
+    document.getElementById("messagesList").appendChild(msgElement);
+    // Tự động cuộn xuống cuối danh sách
+    const messagesList = document.getElementById("messagesList");
+    messagesList.scrollTop = messagesList.scrollHeight;
+});
 
-                // Hiển thị lựa chọn chat khi nhấn nút chat chính
-                document.getElementById("chatButton").addEventListener("click", function () {
-                    const chatOptions = document.getElementById("chatOptions");
-                    if (chatOptions.style.display === "none" || chatOptions.style.display === "") {
-                        chatOptions.style.display = "block";
-                    } else {
-                        chatOptions.style.display = "none";
-                    }
-                });
+// Bắt đầu kết nối SignalR
+connection.start().catch(err => console.error(err.toString()));
 
-                // Hiển thị khung chat Dialogflow ngay khi chọn chat với bot
-                function openDialogFlowChat() {
-                    document.getElementById("dialogflowContainer").style.display = "block";
-                    document.getElementById("chatContainer").style.display = "none";
-                    document.getElementById("chatOptions").style.display = "none";
-                }
+// Gửi tin nhắn khi nhấn nút
+document.getElementById("sendMessageButton").addEventListener("click", function () {
+    if (isAuthenticated === "false") {
+        alert("Bạn cần đăng nhập để gửi tin nhắn.");
+        return;
+    }
 
-                // Hiển thị khung chat SignalR
-                function openSignalRChat() {
-                    document.getElementById("dialogflowContainer").style.display = "none";
-                    document.getElementById("chatContainer").style.display = "block";
-                    document.getElementById("chatOptions").style.display = "none";
-                }
+    const message = document.getElementById("messageInput").value;
+    const user = '@User.Identity.Name';  // Lấy tên người dùng từ ASP.NET Core
+    connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+    document.getElementById("messageInput").value = ''; // Xóa nội dung ô nhập sau khi gửi
+});
 
-                // Đóng chat Dialogflow khi nhấn nút X
-                document.getElementById("closeDialogFlowButton").addEventListener("click", function () {
-                    document.getElementById("dialogflowContainer").style.display = "none";
-                });
+// Hiển thị lựa chọn chat khi nhấn nút chat chính
+document.getElementById("chatButton").addEventListener("click", function () {
+    if (isAuthenticated === "false") {
+        alert("Bạn cần đăng nhập để sử dụng tính năng chat.");
+        return;
+    }
 
-                // Đóng chat SignalR khi nhấn nút X
-                document.getElementById("closeChatButton").addEventListener("click", function () {
-                    document.getElementById("chatContainer").style.display = "none";
-                });
+    const chatOptions = document.getElementById("chatOptions");
+    if (chatOptions.style.display === "none" || chatOptions.style.display === "") {
+        chatOptions.style.display = "block";
+    } else {
+        chatOptions.style.display = "none";
+    }
+});
+
+// Hiển thị khung chat Dialogflow ngay khi chọn chat với bot
+function openDialogFlowChat() {
+    document.getElementById("dialogflowContainer").style.display = "block";
+    document.getElementById("chatContainer").style.display = "none";
+    document.getElementById("chatOptions").style.display = "none";
+}
+
+// Hiển thị khung chat SignalR
+function openSignalRChat() {
+    document.getElementById("dialogflowContainer").style.display = "none";
+    document.getElementById("chatContainer").style.display = "block";
+    document.getElementById("chatOptions").style.display = "none";
+}
+
+// Đóng chat Dialogflow khi nhấn nút X
+document.getElementById("closeDialogFlowButton").addEventListener("click", function () {
+    document.getElementById("dialogflowContainer").style.display = "none";
+});
+
+// Đóng chat SignalR khi nhấn nút X
+document.getElementById("closeChatButton").addEventListener("click", function () {
+    document.getElementById("chatContainer").style.display = "none";
+});
             </script>
+
+
 
 
 

@@ -10,6 +10,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.19/signalr.min.js"></script>
 <script>
+    // Lấy tên người dùng hiện tại từ ASP.NET Core
+    const currentUser = '@User.Identity.Name'; // Lấy tên người dùng từ hệ thống đăng nhập
+
     // Kết nối tới SignalR Hub
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/chathub")  // Địa chỉ của SignalR Hub
@@ -32,7 +35,7 @@
     // Gửi tin nhắn khi nhấn nút
     document.getElementById("sendMessageButton").addEventListener("click", function () {
         const message = document.getElementById("messageInput").value;
-        const user = "Customer"; // Thay bằng tên người dùng hiện tại nếu có
+        const user = currentUser;  // Sử dụng tên người dùng hiện tại
         connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
         document.getElementById("messageInput").value = ''; // Xóa nội dung ô nhập sau khi gửi
     });
@@ -47,3 +50,4 @@
         }
     });
 </script>
+
