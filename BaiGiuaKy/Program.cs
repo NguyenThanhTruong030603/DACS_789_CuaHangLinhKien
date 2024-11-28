@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using System.Configuration;
 using BaiGiuaKy.Repositories.BaiGiuaKy.Repositories;
 using BaiGiuaky.Hubs;
+using BaiGiuaky.Service.Vnpay;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -23,7 +24,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 		.AddDefaultTokenProviders()
 		.AddDefaultUI()
 		.AddEntityFrameworkStores<ApplicationDbContext>();
-
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

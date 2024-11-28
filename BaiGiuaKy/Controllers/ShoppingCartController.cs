@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BaiGiuaKy.Service;
 using static BaiGiuaKy.Models.Order;
+using BaiGiuaky.Service.Vnpay;
+using BaiGiuaky.Models.Vnpay;
 
 namespace BaiGiuaKy.Controllers
 {
@@ -19,15 +21,21 @@ namespace BaiGiuaKy.Controllers
         private readonly IProductRepository _productRepository;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private IMomoService _momoService;
-        public ShoppingCartController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IProductRepository productRepository, IMomoService momoService)
+		private readonly IVnPayService _vnPayservice;
+
+		private IMomoService _momoService;
+        public ShoppingCartController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IProductRepository productRepository, IMomoService momoService, IVnPayService vnPayservice)
         {
             _productRepository = productRepository;
             _context = context;
             _userManager = userManager;
-            _momoService = momoService;
+			_vnPayservice = vnPayservice;
+			_momoService = momoService;
         }
-		public IActionResult ApplyDiscount(string discountCode)
+        
+
+
+        public IActionResult ApplyDiscount(string discountCode)
 		{
 			var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
 			if (cart == null || !cart.Items.Any())
@@ -139,30 +147,51 @@ namespace BaiGiuaKy.Controllers
 				Price = i.Price
 			}).ToList();
 
-			if (order.PaymentMethod == "MoMo")
-			{
-				string id = Guid.NewGuid().ToString();
-				var orderInfo = new OrderInfoModel
+            if (order.PaymentMethod == "MoMo")
+            {
+                string id = Guid.NewGuid().ToString();
+                var orderInfo = new OrderInfoModel
+                {
+                    Amount = (int)cart.Items.Sum(i => i.Price * i.Quantity * (1 - cart.DiscountPercentage / 100)),
+                    FullName = user.UserName,
+                    OrderId = id,
+                    OrderInfo = "thanh toan cho don hang " + id
+                };
+
+                var response = await _momoService.CreatePaymentAsync(orderInfo);
+
+                if (response == null || string.IsNullOrEmpty(response.PayUrl))
+                {
+                    TempData["Error"] = "There was an error creating the payment. Please try again later.";
+                    return RedirectToAction("Index");
+                }
+
+                _context.Orders.Add(order);
+                return Redirect(response.PayUrl);
+            } else if (order.PaymentMethod == "VnPay")
+            {
+
+
+				// Create the VNPAY payment URL
+				var vnPayModel = new VnPaymentRequestModel
 				{
-					Amount = (double)cart.Items.Sum(i => i.Price * i.Quantity * (1 - cart.DiscountPercentage / 100)),
-					FullName = user.FullName,
-					OrderId = id,
-					OrderInfo = "thanh toan cho don hang " + id
+					Amount = (int)cart.Items.Sum(i => i.Price * i.Quantity * (1 - cart.DiscountPercentage / 100)),
+					CreatedDate = DateTime.Now,
+					Description = $"Thanh toan",
+					FullName = user.UserName,
+					OrderId = new Random().Next(1000, 100000)
 				};
 
-				var response = await _momoService.CreatePaymentAsync(orderInfo);
 
-				if (response == null || string.IsNullOrEmpty(response.PayUrl))
-				{
-					TempData["Error"] = "There was an error creating the payment. Please try again later.";
-					return RedirectToAction("Index");
-				}
-
-				_context.Orders.Add(order);
-				return Redirect(response.PayUrl);
+				
+               // return View("DebugPayment", paymentInfo);
+                _context.Orders.Add(order);
+				// Redirect to VNPAY
+				return Redirect(_vnPayservice.CreatePaymentUrl(HttpContext, vnPayModel));
 			}
-			else
-			{
+
+            else
+            {
 				order.Status = OrderStatus.ChờXácNhận;
 				_context.Orders.Add(order);
 				await _context.SaveChangesAsync();
@@ -284,6 +313,59 @@ namespace BaiGiuaKy.Controllers
 
             return Ok(); 
         }
+		
+        [HttpGet]
+        public async Task<IActionResult> PaymentCallBackVnPay()
+        {
+            var cart =
+            HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+
+            var user = await _userManager.GetUserAsync(User);
+            Order order = new Order();
+            string shippingAddress = HttpContext.Session.GetString("ShippingAddress");
+            string notes = HttpContext.Session.GetString("Notes");
+            string paymentMethod = HttpContext.Session.GetString("PaymentMethod");
+            order.UserId = user.Id;
+            order.OrderDate = DateTime.UtcNow;
+            order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
+            order.ShippingAddress = shippingAddress;
+            order.Notes = notes;
+            order.PaymentMethod = paymentMethod;
+            order.DiscountPercentage = 0;
+
+            order.Status = OrderStatus.ChờXácNhận;
+            if (!string.IsNullOrEmpty(cart.DiscountCode))
+            {
+                order.TotalPrice = order.TotalPrice * (1 - cart.DiscountPercentage / 100) ;
+                order.DiscountCode = cart.DiscountCode;
+                order.DiscountPercentage = cart.DiscountPercentage;
+            }
+            order.OrderDetails = cart.Items.Select(i => new OrderDetail
+            {
+                ProductId = i.ProductId,
+                Quantity = i.Quantity,
+                Price = i.Price
+            }).ToList();
+
+			// Process the payment response from VNPAY
+			var response = _vnPayservice.PaymentExecute(Request.Query);
+
+			// Handle the response
+			if (response.VnPayResponseCode == "00")
+            {
+                _context.Orders.Add(order);
+
+                await _context.SaveChangesAsync();
+                HttpContext.Session.Remove("Cart");
+                return View("OrderCompleted", order.Id);
+            }
+            else
+            {
+
+                return RedirectToAction("Index");
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> CreatePaymentUrl(OrderInfoModel model)
@@ -291,6 +373,8 @@ namespace BaiGiuaKy.Controllers
             var response = await _momoService.CreatePaymentAsync(model);
             return Redirect(response.PayUrl);
         }
+        
+
 
         [HttpGet]
         public async Task<IActionResult> PaymentCallBackAsync()

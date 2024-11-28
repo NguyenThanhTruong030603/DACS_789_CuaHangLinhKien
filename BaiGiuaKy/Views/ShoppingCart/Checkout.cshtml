@@ -5,6 +5,8 @@
 }
 
 <h2>Checkout</h2>
+<h3>Payment Information</h3>
+
 
 <form asp-action="Checkout" method="post">
     <div class="form-group">
@@ -27,6 +29,11 @@
             <div class="form-check">
                 <input asp-for="PaymentMethod" class="form-check-input" type="radio" value="MoMo" id="MoMo">
                 <label class="form-check-label" for="MoMo">Thanh toán qua MoMo</label>
+            </div>
+            <div class="form-check">
+                <input asp-for="PaymentMethod" class="form-check-input" type="radio" value="VnPay" id="VnPay">
+                <label class="form-check-label" for="VnPay">Thanh toán qua VNPAY</label>
+
             </div>
             <span asp-validation-for="PaymentMethod" class="text-danger"></span>
         </div>

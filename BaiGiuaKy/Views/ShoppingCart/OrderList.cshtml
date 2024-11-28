@@ -15,6 +15,7 @@
                 <th>Mã đơn hàng</th>
                 <th>Ngày đặt</th>
                 <th>Phần trăm giảm giá</th>
+                <th>Phương thưc thanh toán</th>
                 <th>Tổng cộng</th>
                 <th>Trạng thái</th>
                 <th></th>
@@ -27,6 +28,7 @@
                     <td>@order.Id</td>
                     <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
                     <td>@order.DiscountPercentage</td>
+                    <td>@order.PaymentMethod</td>
                     <td>@order.TotalPrice VND</td>
                     <td>@GetOrderStatusText(order.Status)</td>
                     <td>
