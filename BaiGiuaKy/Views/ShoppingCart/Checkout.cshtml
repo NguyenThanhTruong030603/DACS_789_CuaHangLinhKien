@@ -4,54 +4,277 @@
     ViewData["Title"] = "Checkout";
 }
 
-<h2>Checkout</h2>
-<h3>Payment Information</h3>
+<div class="checkout-container my-4">
+    <h2 class="checkout-title text-center mb-4">Checkout</h2>
+    <h3 class="checkout-subtitle text-center text-primary mb-4">Payment Information</h3>
 
+    <form asp-action="Checkout" method="post" class="checkout-form">
+        <div class="row">
+            <!-- Province Selection -->
+            <div class="col-md-4 mb-3">
+                <label for="province" class="checkout-label form-label">Chọn Tỉnh Thành <i class="fas fa-map-marker-alt"></i></label>
+                <select class="checkout-select" id="province" name="province" title="Chọn Tỉnh Thành">
+                    <option value="0">Tỉnh Thành</option>
+                </select>
+                <span class="checkout-validation text-danger" id="provinceValidation"></span>
+            </div>
 
-<form asp-action="Checkout" method="post">
-    <div class="form-group">
-        <label asp-for="ShippingAddress">Địa chỉ giao hàng</label>
-        <input asp-for="ShippingAddress" class="form-control" />
-        <span asp-validation-for="ShippingAddress" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Notes">Ghi chú</label>
-        <textarea asp-for="Notes" class="form-control"></textarea>
-        <span asp-validation-for="Notes" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="PaymentMethod">Phương thức thanh toán</label>
-        <div class="border p-3">
-            <div class="form-check">
-                <input asp-for="PaymentMethod" class="form-check-input" type="radio" value="CashOnDelivery" id="CashOnDelivery">
-                <label class="form-check-label" for="CashOnDelivery">Thanh toán tận nơi</label>
+            <!-- District Selection -->
+            <div class="col-md-4 mb-3">
+                <label for="district" class="checkout-label form-label">Chọn Quận Huyện <i class="fas fa-city"></i></label>
+                <select class="checkout-select" id="district" name="district" title="Chọn Quận Huyện">
+                    <option value="0">Quận Huyện</option>
+                </select>
+                <span class="checkout-validation text-danger" id="districtValidation"></span>
             </div>
-            <div class="form-check">
-                <input asp-for="PaymentMethod" class="form-check-input" type="radio" value="MoMo" id="MoMo">
-                <label class="form-check-label" for="MoMo">Thanh toán qua MoMo</label>
-            </div>
-            <div class="form-check">
-                <input asp-for="PaymentMethod" class="form-check-input" type="radio" value="VnPay" id="VnPay">
-                <label class="form-check-label" for="VnPay">Thanh toán qua VNPAY</label>
 
+            <!-- Ward Selection -->
+            <div class="col-md-4 mb-3">
+                <label for="ward" class="checkout-label form-label">Chọn Phường Xã <i class="fas fa-house-user"></i></label>
+                <select class="checkout-select" id="ward" name="ward" title="Chọn Phường Xã">
+                    <option value="0">Phường Xã</option>
+                </select>
+                <span class="checkout-validation text-danger" id="wardValidation"></span>
             </div>
-            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+
+            <!-- Phone Number -->
+            <div class="col-md-4 mb-3">
+                <label for="phoneNumber" class="checkout-label form-label">Số điện thoại <i class="fas fa-phone"></i></label>
+                <input type="tel" id="phoneNumber" class="checkout-input form-control" placeholder="Nhập số điện thoại" />
+                <span class="checkout-validation text-danger" id="phoneValidation"></span>
+            </div>
+
+            
+
+            <!-- Confirm Button -->
+            <div class="col-md-12 mb-3">
+                <button type="button" id="confirmButton" class="btn btn-success btn-block">
+                    <i class="fas fa-check-circle"></i> Xác nhận
+                </button>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="col-md-12 mb-3">
+                <label asp-for="ShippingAddress" class="checkout-label form-label">Địa chỉ giao hàng <i class="fas fa-map-marker-alt"></i></label>
+                <input asp-for="ShippingAddress" id="ShippingAddress" class="checkout-input form-control" placeholder="Địa chỉ giao hàng sẽ hiển thị ở đây" readonly />
+                <span asp-validation-for="ShippingAddress" class="checkout-validation text-danger"></span>
+            </div>
+            <!-- Notes -->
+            <div class="col-md-12 mb-3">
+                <label for="notes" class="checkout-label form-label">Ghi chú <i class="fas fa-sticky-note"></i></label>
+                <textarea id="notes" class="checkout-input form-control" placeholder="Nhập ghi chú (nếu có)"></textarea>
+                <span class="checkout-validation text-danger" id="notesValidation"></span>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label for="TotalPrice">Tổng tiền</label>
-        <input type="text" class="form-control" id="TotalPrice" name="TotalPrice" value="@Model.TotalPrice" readonly>
-    </div>
+        <!-- Payment Methods -->
+        <div class="payment-method mb-3">
+            <label asp-for="PaymentMethod" class="checkout-label form-label">Phương thức thanh toán <i class="fas fa-credit-card"></i></label>
+            <div class="checkout-payment-options border p-3">
+                <div class="form-check">
+                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" value="CashOnDelivery" id="CashOnDelivery">
+                    <label class="form-check-label" for="CashOnDelivery">
+                        <i class="fas fa-money-bill-wave"></i> Thanh toán tận nơi
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" value="MoMo" id="MoMo">
+                    <label class="form-check-label" for="MoMo">
+                        <i class="fab fa-motorcycle"></i> Thanh toán qua MoMo
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" value="VnPay" id="VnPay">
+                    <label class="form-check-label" for="VnPay">
+                        <i class="fas fa-wallet"></i> Thanh toán qua VNPAY
+                    </label>
+                </div>
+            </div>
+            <span asp-validation-for="PaymentMethod" class="checkout-validation text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Đặt Hàng</button>
-    <div class="card-footer text-muted text-center">
-        <a asp-action="Index" class="btn btn-outline-primary">Quay lại</a>
-    </div>
-</form>
+        <!-- Tổng tiền -->
+        <div class="form-group mb-3 d-flex align-items-center checkout-total">
+            <label for="totalPrice" class="checkout-label">Tổng tiền:</label>
+            <input type="text" class="checkout-input form-control w-50" id="TotalPrice" name="TotalPrice" value="@Model.TotalPrice ₫" readonly />
+        </div>
+
+        <button type="submit" class="btn btn-primary checkout-btn-submit">
+            <i class="fas fa-shopping-cart"></i> Hoàn tất đơn hàng
+        </button>
+
+        <!-- Back Button -->
+        <div class="checkout-footer text-center">
+            <a asp-action="Index" class="btn btn-outline-primary checkout-btn-back">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="https://esgoo.net/scripts/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        // Populate Province dropdown
+        $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data_tinh) {
+            if (data_tinh.error == 0) {
+                $.each(data_tinh.data, function (key_tinh, val_tinh) {
+                    $("#province").append('<option value="' + val_tinh.id + '">' + val_tinh.full_name + '</option>');
+                });
+
+                // Populate District on Province change
+                $("#province").change(function (e) {
+                    var idProvince = $(this).val();
+                    $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idProvince + '.htm', function (data_quan) {
+                        if (data_quan.error == 0) {
+                            $("#district").html('<option value="0">Quận Huyện</option>');
+                            $("#ward").html('<option value="0">Phường Xã</option>');
+                            $.each(data_quan.data, function (key_quan, val_quan) {
+                                $("#district").append('<option value="' + val_quan.id + '">' + val_quan.full_name + '</option>');
+                            });
+
+                            // Populate Ward on District change
+                            $("#district").change(function (e) {
+                                var idDistrict = $(this).val();
+                                $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idDistrict + '.htm', function (data_phuong) {
+                                    if (data_phuong.error == 0) {
+                                        $("#ward").html('<option value="0">Phường Xã</option>');
+                                        $.each(data_phuong.data, function (key_phuong, val_phuong) {
+                                            $("#ward").append('<option value="' + val_phuong.id + '">' + val_phuong.full_name + '</option>');
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                    });
+                });
+            }
+        });
+
+        // Handle Confirm Button click
+        $("#confirmButton").click(function () {
+            var province = $("#province").val();
+            var district = $("#district").val();
+            var ward = $("#ward").val();
+            var phone = $("#phoneNumber").val();
+            var notes = $("#notes").val();
+
+            // Check if all fields are filled
+            if (province == "0" || district == "0" || ward == "0" || phone === "") {
+                alert("Vui lòng chọn đầy đủ tỉnh thành, quận huyện, phường xã và nhập số điện thoại.");
+                return;
+            }
+
+            // Update Shipping Address
+            var shippingAddress = $("#ShippingAddress");
+            var provinceText = $("#province option:selected").text();
+            var districtText = $("#district option:selected").text();
+            var wardText = $("#ward option:selected").text();
+            shippingAddress.val(provinceText + ", " + districtText + ", " + wardText + " - " + phone);
+        });
+    });
+</script>
+
+<style>
+    .checkout-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .checkout-title, .checkout-subtitle {
+        font-family: 'Arial', sans-serif;
+    }
+
+    .checkout-label {
+        font-weight: bold;
+    }
+
+    .checkout-select, .checkout-input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+    }
+
+    .checkout-validation {
+        font-size: 0.875rem;
+    }
+
+    .checkout-btn-submit {
+        width: 100%;
+        padding: 12px;
+        font-size: 1.125rem;
+        margin-top: 20px;
+    }
+
+    .checkout-btn-back {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        margin-top: 15px;
+    }
+
+    .payment-method .form-check-label {
+        font-size: 1.1rem;
+    }
+
+    .payment-method .form-check-input {
+        margin-right: 10px;
+    }
+
+    .checkout-footer {
+        margin-top: 20px;
+    }
+
+    .checkout-payment-options {
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+
+    .checkout-btn-back {
+        font-size: 1rem;
+    }
+    /* Tổng tiền trong khung */
+    .checkout-total {
+        display: flex;
+        align-items: center;
+        border: 1px solid #28a745; /* Màu xanh lá nhẹ cho khung */
+        border-radius: 8px;
+        padding: 8px 12px; /* Giảm padding để thu nhỏ khung */
+        background-color: #e6f9ea; /* Màu nền nhẹ nhàng */
+        width: auto; /* Cho phép khung tự động mở rộng theo nội dung */
+        min-width: 200px; /* Đảm bảo khung có chiều rộng tối thiểu */
+        margin: 0 auto; /* Căn giữa khung */
+        gap: 4px; /* Giảm khoảng cách giữa label và input */
+    }
+
+        .checkout-total .checkout-label {
+            font-weight: bold;
+            color: #28a745; /* Màu xanh lá đậm cho label */
+            font-size: 1.25rem;
+            margin-right: 0; /* Loại bỏ khoảng cách phải của label */
+        }
+
+        .checkout-total .checkout-input {
+            font-size: 1.25rem; /* Giảm kích thước chữ của input */
+            padding: 0px; /* Giảm padding cho input */
+            border-radius: 4px; /* Thêm radius cho góc của input */
+            border: none;
+            background-color: transparent;
+            color: #333;
+            text-align: left; /* Đặt căn trái cho số tiền */
+            flex-grow: 1; /* Cho phép input chiếm không gian còn lại */
+            white-space: nowrap; /* Ngăn không cho chữ bị xuống dòng */
+            overflow: hidden; /* Ẩn bất kỳ phần nào tràn ra */
+            text-overflow: ellipsis; /* Nếu số tiền quá dài, hiển thị dấu "..." */
+        }
+
+
+
+
+</style>

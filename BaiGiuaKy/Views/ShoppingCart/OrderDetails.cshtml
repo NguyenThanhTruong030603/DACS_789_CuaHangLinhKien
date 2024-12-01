@@ -1,37 +1,89 @@
 ﻿@model BaiGiuaKy.Models.Order
 
-<h2>Đơn hàng của bạn</h2>
+<!-- Content to print starts here -->
+<div id="printableArea">
+    <h2 class="text-center my-4">Đơn hàng của bạn</h2>
 
-<h2>Chi tiết đặt hàng - @Model.Id</h2>
+    <h3 class="text-center mb-3">Chi tiết đặt hàng - <strong>@Model.Id</strong></h3>
+    <p class="text-center mb-4"><strong>Địa chỉ giao hàng:</strong> @Model.ShippingAddress</p>
+    <p class="text-center mb-4"><strong>Ghi chú:</strong> @Model.Notes</p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Sản phẩm</th>
-            <th>Số lượng</th>
-            <th>Giá</th>
-            <th>Thành tiền</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var detail in Model.OrderDetails)
-        {
+    <table class="table table-striped table-bordered">
+        <thead>
             <tr>
-                <td>@detail.Product.Name</td>
-                <td>@detail.Quantity</td>
-                <td>@detail.Price VND</td>
-                <td>@(detail.Price*detail.Quantity) VND</td>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th>Thành tiền</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var detail in Model.OrderDetails)
+            {
+                <tr>
+                    <td>@detail.Product.Name</td>
+                    <td>@detail.Quantity</td>
+                    <td>@detail.Price VND</td>
+                    <td>@(detail.Price * detail.Quantity) VND</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<div>
-    <h3>Tổng cộng: @Model.TotalPrice VND</h3>
+    <div class="d-flex justify-content-between align-items-center">
+        <h3 class="text-danger"><strong>Tổng cộng: @Model.TotalPrice VND</strong></h3>
+    </div>
 </div>
-<div class="card-footer text-muted text-center">
-    <a asp-action="OrderList" class="btn btn-outline-primary">Quay lại </a>
+<!-- Content to print ends here -->
+<!-- Action buttons -->
+<div class="d-flex justify-content-center mt-4">
+    <a asp-action="OrderList" class="btn btn-outline-primary mx-2">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+
+    <a href="javascript:void(0);" class="btn btn-info mx-2" onclick="printOrder()">
+        <i class="fas fa-print"></i> In đơn hàng
+    </a>
 </div>
-<div>
-    <!-- Các tùy chọn khác như reorder, in đơn hàng, v.v... -->
+
+<div class="card-footer text-muted text-center mt-5">
+    <p>© 2024 Công ty TNHH XYZ</p>
 </div>
+
+<script>
+    // Print function to print the order details and header (inside #printableArea)
+    function printOrder() {
+        var printContents = document.getElementById("printableArea").innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+</script>
+
+<style>
+    /* General styling */
+    h2, h3 {
+        font-weight: bold;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f1f1f1;
+    }
+
+    /* Action button styles */
+    .btn i {
+        margin-right: 5px;
+    }
+
+    /* Styling the total price */
+    .text-danger {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+</style>

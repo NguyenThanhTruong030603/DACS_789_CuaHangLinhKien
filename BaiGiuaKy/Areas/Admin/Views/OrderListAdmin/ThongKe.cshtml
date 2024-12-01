@@ -1,0 +1,203 @@
+﻿@model X.PagedList.IPagedList<BaiGiuaKy.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+    decimal total = Convert.ToDecimal(ViewData["Total"]);
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<h1 class="text-center my-4">Thống Kê Doanh Thu</h1>
+
+<!-- Khung Thống Kê -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">Thống kê</h3>
+    </div>
+    <div class="card-body">
+        <!-- Tìm kiếm -->
+        <form asp-action="ThongKe" method="get" style="margin-top: 20px;">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <label for="startDate">Ngày bắt đầu:</label>
+                    <input type="date" id="startDate" name="startDate" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label for="endDate">Ngày kết thúc:</label>
+                    <input type="date" id="endDate" name="endDate" class="form-control" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Thống kê</button>
+        </form>
+
+        <!-- Tổng tiền -->
+        <div class="total-price mt-4">
+            <h5>
+                <span>Tổng tiền:</span>
+                <span class="total-amount">@total</span>
+            </h5>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm khung thống kê chia đôi cho biểu đồ -->
+<div class="row">
+    <div class="col-md-6">
+        <!-- Biểu đồ Line -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3 class="card-title">Biểu đồ Tổng Tiền theo Tháng (Line)</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <!-- Biểu đồ Hình Tròn -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3 class="card-title">Biểu đồ Doanh Thu theo Tháng (Pie)</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="myPieChart" width="250" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm Script để vẽ Biểu đồ -->
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewData["Months"])),
+            datasets: [{
+                label: 'Tổng Tiền',
+                data: @Html.Raw(Json.Serialize(ViewData["TotalAmounts"])),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    enabled: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+    var months = @Html.Raw(Json.Serialize(ViewData["Months"]));
+    var totalAmounts = @Html.Raw(Json.Serialize(ViewData["TotalAmounts"]));
+
+    var ctx = document.getElementById('myPieChart').getContext('2d');
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: months,
+            datasets: [{
+                data: totalAmounts,
+                backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A6', '#FF9633', '#33FFF5'],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString() + ' VNĐ';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Style -->
+<style>
+    /* Kích thước của biểu đồ hình tròn (pie chart) */
+    #myPieChart {
+        width: 100%;
+        height: 250px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Kích thước của biểu đồ line */
+    #myChart {
+        width: 100%;
+        height: 200px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Khung chứa biểu đồ */
+    .card {
+        margin-bottom: 20px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        font-weight: bold;
+        color: #333;
+        padding: 10px;
+    }
+
+    .card-body {
+        background-color: #ffffff;
+        padding: 20px;
+    }
+
+    /* Phần Tổng tiền */
+    .total-price {
+        background-color: #28a745;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .total-price h5 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .total-price span {
+            font-size: 1.25rem;
+            color: #f8f9fa;
+        }
+
+    .total-amount {
+        font-size: 1.5rem;
+        color: #dc3545;
+    }
+
+    .total-price:hover {
+        background-color: #218838;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+</style>

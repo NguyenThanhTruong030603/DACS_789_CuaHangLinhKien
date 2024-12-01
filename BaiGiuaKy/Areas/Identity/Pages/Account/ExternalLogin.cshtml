@@ -4,38 +4,52 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
-<h2 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h2>
-<hr />
+<div class="login-container my-5">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6">
+            <div class="card login-card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="card-title mb-0">@ViewData["Title"]</h3>
+                </div>
+                <div class="card-body p-4">
+                    <h5 id="external-login-title" class="text-center text-muted">
+                        Associate your @Model.ProviderDisplayName account
+                    </h5>
+                    <p id="external-login-description" class="text-info text-center">
+                        You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
+                        Please enter your full name and email address below to complete registration.
+                    </p>
+                    <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-<p id="external-login-description" class="text-info">
-    You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
-    Please enter your full name and an email address for this site below and click the Register button to finish logging in.
-</p>
+                        <!-- Full Name Input -->
+                        <div class="form-floating mb-4">
+                            <input asp-for="Input.FullName" class="form-control" autocomplete="name" placeholder="Full Name" />
+                            <label asp-for="Input.FullName">
+                                <i class="bi bi-person"></i> Full Name
+                            </label>
+                            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                        </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        <!-- Email Input -->
+                        <div class="form-floating mb-4">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="email" placeholder="Email Address" />
+                            <label asp-for="Input.Email">
+                                <i class="bi bi-envelope"></i> Email Address
+                            </label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
 
-            <!-- FullName input field -->
-            <div class="form-floating mb-3">
-                <input asp-for="Input.FullName" class="form-control" autocomplete="name" placeholder="Please enter your full name." />
-                <label asp-for="Input.FullName" class="form-label"></label>
-                <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                        <button type="submit" class="btn btn-primary w-100">
+                            Register
+                        </button>
+                    </form>
+                </div>
             </div>
-
-            <!-- Email input field -->
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="email" placeholder="Please enter your email." />
-                <label asp-for="Input.Email" class="form-label"></label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
+        </div>
     </div>
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

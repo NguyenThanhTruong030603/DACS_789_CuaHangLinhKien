@@ -1,4 +1,4 @@
-
+﻿
 using BaiGiuaKy.Models;
 using BaiGiuaKy.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +10,9 @@ using System.Configuration;
 using BaiGiuaKy.Repositories.BaiGiuaKy.Repositories;
 using BaiGiuaky.Hubs;
 using BaiGiuaky.Service.Vnpay;
+using BaiGiuaky.Libraries;
+using Microsoft.AspNetCore.Authentication.Facebook;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -49,8 +52,17 @@ builder.Services.AddAuthentication().AddGoogle(googleoptions =>
 	googleoptions.ClientId = configuration["Authentication:Google:ClientId"];
 	googleoptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
 
+}).AddFacebook(FacebookOptions =>
+{
+    FacebookOptions.AppId = configuration["Authentication:Facebook:AppId"];
+    FacebookOptions.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+	FacebookOptions.CallbackPath = "/signin-facebook";
 });
+
+builder.Services.AddHttpClient();
+
 builder.Services.AddSignalR();
+
 var app = builder.Build();
 app.MapHub<ChatHub>("/chathub");
 // Configure the HTTP request pipeline.

@@ -4,74 +4,199 @@
     ViewData["Title"] = "Đăng Ký";
 }
 
-<div class="">
-    <div class="" style="margin-left: 440px; width: 400px">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+<div class="register-container my-5">
+    <div class="row justify-content-center align-items-center">
+        <!-- Form đăng ký -->
+        <div class="col-md-6">
+            <div class="card register-card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="card-title mb-0">@ViewData["Title"]</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-            <h1 style="margin-left: 120px">@ViewData["Title"]</h1>
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        <!-- Họ tên -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.FullName" class="form-control" id="fullNameInput" placeholder="Nhập họ tên" />
+                            <label asp-for="Input.FullName"><i class="bi bi-person"></i> Họ Tên</label>
+                            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                        </div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="Input.FullName" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.FullName">Họ Tên</label>
-                <span asp-validation-for="Input.FullName" class="text-danger"></span>
-            </div>
+                        <!-- Email -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" id="emailInput" autocomplete="username" placeholder="name@example.com" />
+                            <label asp-for="Input.Email"><i class="bi bi-envelope"></i> Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                       
+                        <!-- Số điện thoại -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.PhoneNumber" class="form-control" id="phoneInput" placeholder="Nhập số điện thoại" />
+                            <label asp-for="Input.PhoneNumber"><i class="bi bi-phone"></i> Số điện thoại</label>
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
+                        <!-- Mật khẩu -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" type="password" class="form-control" id="passwordInput" autocomplete="new-password" placeholder="Mật khẩu" />
+                            <label asp-for="Input.Password"><i class="bi bi-lock"></i> Mật khẩu</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Mật khẩu</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Xác nhận mật khẩu</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
+                        <!-- Xác nhận mật khẩu -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.ConfirmPassword" type="password" class="form-control" id="confirmPasswordInput" autocomplete="new-password" placeholder="Xác nhận mật khẩu" />
+                            <label asp-for="Input.ConfirmPassword"><i class="bi bi-lock-fill"></i> Xác nhận mật khẩu</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
 
-          
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng ký</button>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Phương thức khác để đăng ký.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
-                                article
-                                about setting up this ASP.NET application to support logging in via external services
-                            </a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
+                        <!-- Nút Đăng ký -->
+                        <div class="d-grid">
+                            <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-person-plus-fill"></i> Đăng ký
+                            </button>
                         </div>
                     </form>
-                }
-            }
-        </section>
+                </div>
+
+                <!-- Phương thức khác để đăng ký -->
+                <div class="card-footer text-center pt-3">
+                    <div class="text-muted mb-3">Hoặc đăng ký với</div>
+                    <div class="d-flex justify-content-center gap-3">
+                        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                        {
+                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="d-flex justify-content-center gap-3">
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                    <button type="submit" class="btn btn-outline-primary external-login-btn" name="provider" value="@provider.Name">
+                                        <!-- Use the icon from Bootstrap Icons or other icon libraries -->
+                                        @if (provider.Name == "Google")
+                                        {
+                                            <i class="bi bi-google"></i> <!-- Google Icon -->
+                                        }
+                                        else if (provider.Name == "Facebook")
+                                        {
+                                            <i class="bi bi-facebook"></i> <!-- Facebook Icon -->
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-person-circle"></i> <!-- Default icon for other providers -->
+                                        }
+                                    </button>
+                                }
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">Hiện không có phương thức đăng nhập ngoài.</div>
+                        }
+                    </div>
+
+                    <!-- Liên kết chuyển qua Đăng Nhập -->
+                    <div class="mt-3">
+                        <span>Đã có tài khoản? </span>
+                        <a href="/Identity/Account/Login" class="btn btn-link p-0">Đăng nhập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    /* Định dạng container chính cho trang đăng ký */
+    .register-container {
+        background-color: #f9f9f9;
+        padding: 2rem;
+    }
+
+    /* Định dạng card đăng ký */
+    .register-card {
+        border-radius: 10px;
+    }
+
+    /* Định dạng các label với icon */
+    .form-floating label {
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+    }
+
+        .form-floating label i {
+            margin-right: 8px;
+        }
+
+    /* Định dạng nút Đăng ký */
+    #registerSubmit {
+        font-size: 1.1rem;
+        padding: 0.75rem 1rem;
+    }
+
+        #registerSubmit i {
+            margin-right: 8px;
+        }
+
+    /* Định dạng nút đăng ký với tài khoản ngoài */
+    .external-login-btn {
+        font-size: 1.25rem;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+        .external-login-btn i {
+            margin-right: 10px;
+            font-size: 1.3rem; /* Giảm kích thước icon */
+        }
+
+        .external-login-btn:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Nút đăng ký ngoài khi hover */
+        .external-login-btn:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+    /* Định dạng cho các biểu tượng ngoài */
+    .card-footer .d-flex {
+        justify-content: center;
+        gap: 15px;
+    }
+
+        .card-footer .d-flex .btn-outline-primary {
+            font-size: 1rem;
+            padding: 0.6rem 1.2rem;
+        }
+
+            .card-footer .d-flex .btn-outline-primary:hover {
+                background-color: #007bff;
+                color: white;
+            }
+
+    /* Điều chỉnh layout của phần footer */
+    .card-footer {
+        background-color: #f8f9fa;
+    }
+
+    /* Định dạng thông báo lỗi */
+    .alert-danger {
+        margin-bottom: 1rem;
+    }
+
+    /* Điều chỉnh layout của phần thông báo */
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+</style>

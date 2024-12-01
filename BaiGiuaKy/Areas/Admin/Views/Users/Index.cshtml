@@ -33,6 +33,7 @@
                 <tr>
                     <th>Tên tài khoản</th>
                     <th>Email</th>
+                    <th>Số điện thoại</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
@@ -43,6 +44,7 @@
                     <tr>
                         <td>@user.FullName</td>
                         <td>@user.Email</td>
+                        <td>@user.PhoneNumber</td>
                         <td>@(user.IsBlocked ? "Chặn" : "Hoạt động")</td>
                         <td>
                             <form asp-controller="Users" asp-action="ResetPassword" asp-route-userId="@user.Id" method="post">

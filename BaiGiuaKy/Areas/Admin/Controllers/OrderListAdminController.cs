@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BaiGiuaKy.Areas.Admin.Controllers
 {
     [Area("Admin")]
-   // [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+    // [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
     public class OrderListAdminController : Controller
     {
         private readonly IOrderRepository _orderRepository;
@@ -20,7 +20,7 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
         {
             _orderRepository = orderRepository;
             _context = context;
-            
+
         }
         [HttpPost]
         public async Task<IActionResult> ChangeStatus(int orderId, string newStatus)
@@ -135,6 +135,25 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
             // Trả về view Index với danh sách đơn hàng đã lấy được
             return View(await orders.ToPagedListAsync(pageNumber, pageSize));
         }
+        ////////////////////////////////////////////////////////////////////////////////
+        public async Task<IActionResult> ThongKeView(int? page)
+        {
+            ViewData["Title"] = "Trang Chủ";
+
+            // Lấy danh sách đơn hàng có trạng thái "Chờ xác nhận" từ repository
+            var orders = await _orderRepository.GetOrdersByStatusAsync(OrderStatus.ĐãGiaoThànhCông);
+
+            // Tính tổng giá trị của các đơn hàng
+            decimal total = orders.Sum(order => order.TotalPrice);
+            ViewData["Total"] = total;
+
+            // Thiết lập phân trang
+            int pageSize = 4;
+            int pageNumber = (page ?? 1);
+
+            // Trả về view Index với danh sách đơn hàng đã lấy được
+            return View(await orders.ToPagedListAsync(pageNumber, pageSize));
+        }
         public async Task<IActionResult> Delete(int id)
         {
             var orders = await _orderRepository.GetByIdAsync(id);
@@ -153,22 +172,34 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> ThongKe(DateTime startDate, DateTime endDate, int? page)
+        public async Task<IActionResult> ThongKe(DateTime startDate, DateTime endDate)
         {
             ViewData["Title"] = "Tìm kiếm";
 
+            // Lấy danh sách đơn hàng đã giao thành công trong khoảng thời gian
             var orders = await _orderRepository.GetOrdersByStatusAsync2(OrderStatus.ĐãGiaoThànhCông);
-
-            // Lọc đơn hàng theo ngày tháng năm
             orders = orders.Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate);
 
-            decimal total = orders.Sum(order => order.TotalPrice); // Tính tổng của tất cả các đơn hàng
-            ViewData["Total"] = total; // Truyền tổng sang view
+            // Lọc và tính tổng tiền theo từng tháng
+            var months = orders
+                .GroupBy(o => o.OrderDate.Month) // Group theo tháng
+                .Select(g => g.Key)
+                .ToList();
 
-            int pageSize = 4;
-            int pageNumber = (page ?? 1);
+            var totalAmounts = orders
+                .GroupBy(o => o.OrderDate.Month)
+                .Select(g => g.Sum(o => o.TotalPrice))
+                .ToList();
 
-            return View("IndexGiaoThanhCong", await orders.ToPagedListAsync(pageNumber, pageSize));
+            // Truyền dữ liệu cho View
+            ViewData["Months"] = months;
+            ViewData["TotalAmounts"] = totalAmounts;
+
+            // Tính tổng giá trị của các đơn hàng
+            decimal total = orders.Sum(order => order.TotalPrice);
+            ViewData["Total"] = total;
+
+            return View("ThongKe", orders.ToPagedList(1, 4)); // Trả về trang IndexGiaoThanhCong
         }
 
         public async Task<IActionResult> Search(string searchString, int? page, string viewName)

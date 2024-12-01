@@ -17,6 +17,138 @@
 @{
     ViewData["Title"] = "Trang Chủ";
 }
+<div class="container">
+
+    <div class="left-panel">
+        <h3> Danh Mục</h3>
+        <ul>
+            
+            <li><a href=@Url.Action("ShowProductsByCategories", "Home", new { categoryId = 1 })>Linh Kiện PC</a></li>
+            <li><a href="#">Tự Xây Dựng Cấu Hình</a></li>
+            <li><a href="#">Nâng Cấp Thu Cũ Đổi Mới</a></li>
+            <li><a href="#">PC HOTGEAR FULL</a></li>
+            <li><a href="#">PC Văn Phòng</a></li>
+            <li><a href="#">LAPTOP</a></li>
+            <li><a href="#">Màn Hình</a></li>
+            <li><a href="#">Bàn Phím</a></li>
+            <li><a href="#">Chuột + Lót Chuột</a></li>
+            <li><a href="#">Tai Nghe Gaming</a></li>
+            <li><a href="#">Bàn - Ghế</a></li>
+        </ul>
+    </div>
+    <div class="right-panel">
+
+        <div class="banner">
+            <img src="~/images/slider_2.webp" alt="Banner 1" class="active">
+            <img src="~/images/slider_5.webp" alt="Banner 2">
+            <img src="~/images/slider_3.jpg" alt="Banner 3">
+            <button class="banner-btn left-btn">&lt;</button>
+            <button class="banner-btn right-btn">&gt;</button>
+        </div>
+        <div class="ads">
+            <div class="ad">
+                <img src="~/images/bottom_banner_1.jpg" alt="Ad 1">
+            </div>
+            <div class="ad">
+                <img src="~/images/right_banner_1.jpg" alt="Ad 2">
+            </div>
+        </div>
+        <div class="call-to-action">
+            Build PC MSI for a crazy price!
+        </div>
+    </div>
+
+
+</div>
+<h1 class="text-center my-4 offset-content">Sản Phẩm</h1>
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 offset-content">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm product-card" onclick="redirectToProductDetail('@item.Id')">
+                <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title text-center text-truncate">@item.Name</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-primary fw-bold">@item.Price.ToString("#,##0") VND</span>
+                        <a asp-controller="ShoppingCart" asp-action="AddToCart" asp-route-ProductId="@item.Id" asp-route-quantity="1" class="btn btn-outline-primary">
+                            <i class="bi-cart-plus-fill"></i> Thêm vào giỏ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function redirectToProductDetail(productId) {
+        window.location.href = "/Home/Display?id=" + productId;
+    }
+</script>
+
+<div class="container1 mt-4">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">Đầu</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(Model.PageNumber - 1)">Trước</a>
+                </li>
+            }
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="?page=@i">@i</a>
+                </li>
+            }
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(Model.PageNumber + 1)">Tiếp</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=@Model.PageCount">Cuối</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<div class="col span_1_of_3">
+    <div class="contact_info">
+        <h3>VỊ TRÍ</h3>
+        <div class="map">
+            <iframe width="100%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.4206985418705!2d106.78253487570396!3d10.855572157727538!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175276e7ea103df%3A0xb6cf10bb7d719327!2zSFVURUNIIC0gxJDhuqFpIGjhu41jIEPDtG5nIG5naOG7hyBUUC5IQ00gKFRodSBEdWMgQ2FtcHVzKQ!5e0!3m2!1svi!2s!4v1710172843840!5m2!1svi!2s"></iframe>
+        </div>
+    </div>
+
+</div>
+
+@* @model X.PagedList.IPagedList<BaiGiuaKy.Models.Product>
+
+@section Scripts
+{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $("#autocomplete").autocomplete({
+                source: '/Home/AutocompleteSearch'
+            });
+        });
+    </script>
+}
+
+@{
+    ViewData["Title"] = "Trang Chủ";
+}
 
 
 
@@ -123,3 +255,4 @@
         </ul>
     </nav>
 </div>
+ *@

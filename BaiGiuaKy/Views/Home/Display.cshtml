@@ -4,6 +4,375 @@
 @{
     var userManager = ViewData["UserManager"] as UserManager<ApplicationUser>;
 }
+<div class="product-container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="product-card shadow-lg border-0">
+                <div class="product-card-body p-4">
+                    <div class="row">
+                        <!-- Image Section -->
+                        <div class="col-md-6 text-center">
+                            <div class="product-image">
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <img src="@Model.ImageUrl" alt="Product Image" class="img-fluid rounded product-img" style="max-height: 500px; width: 100%; object-fit: contain;" />
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Product Info Section -->
+                        <div class="col-md-6">
+                            <div class="product-info">
+                                <h1 class="product-title">@Model.Name</h1>
+                                <h2 class="product-price text-danger">@Model.Price VND</h2>
+
+
+                                <div class="promotion mt-4">
+                                    <h5><strong>Khuyến mãi - Ưu đãi</strong></h5>
+                                    <ul>
+                                        <li>FLASH SALE - Giảm đến 59%</li>
+                                        <li>Cam kết giá tốt nhất, hỗ trợ lâu dài</li>
+                                        <li>Giá tốt cho doanh nghiệp</li>
+                                    </ul>
+                                </div>
+
+                                <div class="quantity-and-actions mt-4">
+                                    <label for="quantity">Số lượng: </label>
+                                    <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control d-inline-block" style="width: 100px;">
+
+                                    <div class="action-buttons mt-3">
+                                        <a asp-action="Index" class="btn btn-secondary btn-lg mr-3">Quay lại</a>
+                                        <button id="addToCartBtn" class="btn btn-danger btn-lg">
+                                            Thêm vào giỏ
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description Section -->
+            <div class="product-description-card mt-4 p-4 shadow border">
+                <h4 class="description-title text-primary">Thông tin chi tiết sản phẩm</h4>
+                <p class="description-content mt-3">@Model.Description</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("addToCartBtn").addEventListener("click", function () {
+        // Lấy số lượng từ input
+        const quantity = document.getElementById("quantity").value;
+        const productId = "@Model.Id"; // Lấy ID sản phẩm
+
+        // Kiểm tra số lượng nhập vào có hợp lệ không
+        if (quantity < 1) {
+            alert("Số lượng phải lớn hơn 0.");
+            return;
+        }
+
+        // Điều hướng đến URL thêm sản phẩm vào giỏ với số lượng
+        const url = `/ShoppingCart/AddToCart?ProductId=${productId}&quantity=${quantity}`;
+        window.location.href = url;
+    });
+</script>
+
+
+
+
+<style>
+    .product-card {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .product-img {
+        border-radius: 10px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-title {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .product-price {
+        font-size: 1.8rem;
+        font-weight: bold;
+    }
+
+    .product-original-price {
+        font-size: 1.2rem;
+    }
+
+    .promotion {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .quantity-and-actions {
+        font-size: 1rem;
+    }
+
+    .action-buttons a {
+        font-size: 1.2rem;
+        padding: 10px 20px;
+    }
+
+    .product-description-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .description-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .description-content {
+        font-size: 1rem;
+        line-height: 1.8;
+        color: #333;
+    }
+
+
+    .action-buttons .btn-lg {
+        font-size: 1.2rem;
+        padding: 12px 40px;
+    }
+
+    .action-buttons .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+        .action-buttons .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+    .action-buttons .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+        .action-buttons .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    .action-buttons .btn-warning {
+        background-color: #ffc107;
+        color: white;
+    }
+
+        .action-buttons .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+
+
+    /* Phần bình luận */
+    .comment-actions {
+        display: none;
+    }
+
+    .card-body .mb-3:hover .comment-actions {
+        display: block;
+    }
+
+    /* Cải thiện giao diện phần bình luận */
+    .comment-actions button {
+        border-radius: 5px;
+    }
+
+        .comment-actions button:hover {
+            background-color: #f0ad4e;
+        }
+
+    /* Cải thiện giao diện của phần bình luận */
+    .card-body .mb-3 {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        padding: 15px;
+        position: relative;
+    }
+
+        .card-body .mb-3:hover {
+            background-color: #e9ecef;
+        }
+
+    /* Nút sửa và xóa */
+    .edit-comment-btn,
+    .delete-comment-btn {
+        border-radius: 20px;
+    }
+
+    /* Modal xác nhận xóa */
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        background-color: #6c757d;
+    }
+
+    .modal-footer button {
+        border-radius: 5px;
+    }
+</style>
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="card mt-4">
+        <div class="card-header bg-secondary text-white">
+            <h4>Thêm bình luận</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="AddComment" method="post">
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <div class="mb-3">
+                    <textarea class="form-control" name="content" rows="3" required placeholder="Nhập bình luận..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Gửi bình luận</button>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <div>
+        Bạn cần <a href="@Url.Action("Login", "Account", new { area = "Identity" })">đăng nhập</a> để bình luận.
+    </div>
+}
+
+<!-- Display Comments -->
+<div class="card mt-4">
+    <div class="card-header bg-secondary text-white">
+        <h4>Bình luận</h4>
+    </div>
+    <div class="card-body">
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            foreach (var comment in Model.Comments)
+            {
+                // Kiểm tra nếu người dùng bị block, không hiển thị bình luận
+                if (comment.User != null && comment.User.IsBlocked)
+                {
+                    continue;
+                }
+
+                <div class="mb-3" style="position: relative;">
+                    <strong>@comment.User.UserName</strong> -
+                    <small>@comment.CreatedAt.ToLocalTime()</small>
+                    <p>@comment.Content</p>
+
+                    @if (User.Identity.IsAuthenticated &&
+                   (User.IsInRole("Admin") || User.IsInRole("Employee") || comment.UserId == userManager.GetUserId(User)))
+                    {
+                        <div class="comment-actions" style="position: absolute; top: 10px; right: 10px;">
+                            <button class="btn btn-warning btn-sm edit-comment-btn" onclick="showEditForm('@comment.Id', '@comment.Content')">Sửa</button>
+                            <button class="btn btn-danger btn-sm delete-comment-btn" onclick="showDeleteConfirmation('@comment.Id')">Xóa</button>
+                        </div>
+
+                        <!-- Edit Comment Form (Initially Hidden) -->
+                        <div id="edit-comment-form-@comment.Id" class="edit-comment-form" style="display: none;">
+                            <form asp-action="EditComment" method="post">
+                                <input type="hidden" name="commentId" value="@comment.Id" />
+                                <textarea class="form-control" name="content" rows="3" required>@comment.Content</textarea>
+                                <button type="submit" class="btn btn-success mt-2">Chỉnh sửa</button>
+                                <button type="button" class="btn btn-secondary mt-2" onclick="hideEditForm('@comment.Id')">Hủy</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <p>Chưa có bình luận nào cho sản phẩm này.</p>
+        }
+    </div>
+</div>
+
+
+<!-- Modal for Delete Confirmation -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationLabel">Xác nhận xóa bình luận</h5>
+                <!-- Close button (X) -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa bình luận này?
+            </div>
+            <div class="modal-footer">
+                <!-- Hủy button -->
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelDeleteBtn">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for handling edit, delete, and modal actions -->
+<script>
+    var commentIdToDelete = null;
+
+    // Show Edit Form
+    function showEditForm(commentId, content) {
+        document.getElementById('edit-comment-form-' + commentId).style.display = 'block';
+    }
+
+    // Hide Edit Form
+    function hideEditForm(commentId) {
+        document.getElementById('edit-comment-form-' + commentId).style.display = 'none';
+    }
+
+    // Show Delete Confirmation Modal
+    function showDeleteConfirmation(commentId) {
+        commentIdToDelete = commentId; // Store commentId to delete
+        $('#deleteConfirmationModal').modal('show');
+    }
+
+    // Confirm Delete
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        if (commentIdToDelete !== null) {
+            // Send delete request via AJAX or redirect to Delete action
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("DeleteComment", "Home")';
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'commentId';
+            input.value = commentIdToDelete;
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+        $('#deleteConfirmationModal').modal('hide'); // Hide modal after action
+    });
+
+    // Close modal when cancel button is clicked
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function () {
+        $('#deleteConfirmationModal').modal('hide'); // Close modal when cancel is clicked
+    });
+</script>
+
+@* @using Microsoft.AspNetCore.Identity
+@using BaiGiuaKy.Models
+@model BaiGiuaKy.Models.Product
+@{
+    var userManager = ViewData["UserManager"] as UserManager<ApplicationUser>;
+}
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8 offset-md-2">
@@ -170,4 +539,4 @@ else
     document.getElementById('cancelDeleteBtn').addEventListener('click', function () {
         $('#deleteConfirmationModal').modal('hide'); // Close modal when cancel is clicked
     });
-</script>
+</script> *@

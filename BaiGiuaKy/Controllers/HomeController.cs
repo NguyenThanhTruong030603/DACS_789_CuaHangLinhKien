@@ -106,7 +106,7 @@ namespace BaiGiuaKy.Controllers
             return View("Index", await products.ToPagedListAsync(pageNumber, pageSize));
         }
 
-        public async Task<IActionResult> ShowProductsByCategory(int categoryId, int? page)
+        public async Task<IActionResult> ShowProductsByCategories(int categoryId, int? page)
         {
             ViewData["Title"] = "San pham theo loai";
 
