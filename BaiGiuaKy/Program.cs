@@ -12,6 +12,9 @@ using BaiGiuaky.Hubs;
 using BaiGiuaky.Service.Vnpay;
 using BaiGiuaky.Libraries;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Net.Mail;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,3 +104,5 @@ app.UseEndpoints(endpoints =>
 app.MapRazorPages();
 
 app.Run();
+// Định nghĩa EmailSender Service
+

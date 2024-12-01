@@ -10,6 +10,7 @@ using BaiGiuaKy.Service;
 using static BaiGiuaKy.Models.Order;
 using BaiGiuaky.Service.Vnpay;
 using BaiGiuaky.Models.Vnpay;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BaiGiuaKy.Controllers
 {
@@ -22,10 +23,11 @@ namespace BaiGiuaKy.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IVnPayService _vnPayservice;
-
-		private IMomoService _momoService;
-        public ShoppingCartController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IProductRepository productRepository, IMomoService momoService, IVnPayService vnPayservice)
+        private readonly IEmailSender _emailSender;
+        private IMomoService _momoService;
+        public ShoppingCartController(IEmailSender emailSender, ApplicationDbContext context, UserManager<ApplicationUser> userManager, IProductRepository productRepository, IMomoService momoService, IVnPayService vnPayservice)
         {
+            _emailSender = emailSender;
             _productRepository = productRepository;
             _context = context;
             _userManager = userManager;
@@ -196,7 +198,8 @@ namespace BaiGiuaKy.Controllers
 				_context.Orders.Add(order);
 				await _context.SaveChangesAsync();
 				HttpContext.Session.Remove("Cart");
-				return View("OrderCompleted", order.Id);
+              
+                return View("OrderCompleted", order.Id);
 			}
 		}
 

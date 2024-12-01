@@ -1,63 +1,80 @@
 ﻿@model IEnumerable<BaiGiuaKy.Models.Product>
 
+<h2 class="text-center mt-5">Xây dựng PC của bạn</h2>
 
-
-<h2 class="text-center">Xây dựng PC của bạn</h2>
-
-<div class="container">
+<div class="container mt-4">
     <form id="buildPcForm" asp-controller="ShoppingCart" asp-action="AddSelectedProducts" method="post">
-        <div class="row">
-            <div class="col-md-12">
-                <label>RAM:</label>
-                <select id="ramSelect" name="selectedProducts" class="form-control">
-                    <option value="">-- Chọn RAM --</option>
-                    @foreach (var ram in Model.Where(p => p.CategoryId == 1)) // CategoryId = 1 là RAM
-                    {
-                        <option value="@ram.Id">@ram.Name - @ram.Price.ToString("C")</option>
-                    }
-                </select>
+        <div class="list-group">
+            <!-- CPU -->
+            <div class="list-group-item text-center">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5 class="mb-1">1. CPU - Bộ vi xử lý</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="cpuSelect" name="selectedProducts" class="form-select">
+                            <option value="">-- Chọn CPU --</option>
+                            @foreach (var cpu in Model.Where(p => p.CategoryId == 2))
+                            {
+                                <option value="@cpu.Id">@cpu.Name - @cpu.Price.ToString("C")</option>
+                            }
+                        </select>
+                    </div>
+                </div>
             </div>
+
+            <!-- RAM -->
+            <div class="list-group-item">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5 class="mb-1">2. RAM - Bộ nhớ trong</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="ramSelect" name="selectedProducts" class="form-select">
+                            <option value="">-- Chọn RAM --</option>
+                            @foreach (var ram in Model.Where(p => p.CategoryId == 1))
+                            {
+                                <option value="@ram.Id">@ram.Name - @ram.Price.ToString("C")</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CASE -->
+            <div class="list-group-item">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5 class="mb-1">3. CASE - Vỏ máy tính</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="caseSelect" name="selectedProducts" class="form-select">
+                            <option value="">-- Chọn CASE --</option>
+                            @foreach (var caseProduct in Model.Where(p => p.CategoryId == 3))
+                            {
+                                <option value="@caseProduct.Id">@caseProduct.Name - @caseProduct.Price.ToString("C")</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Các danh mục khác (VGA, Mainboard, PSU) có thể được thêm vào tương tự -->
+
         </div>
 
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <label>CPU:</label>
-                <select id="cpuSelect" name="selectedProducts" class="form-control">
-                    <option value="">-- Chọn CPU --</option>
-                    @foreach (var cpu in Model.Where(p => p.CategoryId == 2)) // CategoryId = 2 là CPU
-                    {
-                        <option value="@cpu.Id">@cpu.Name - @cpu.Price.ToString("C")</option>
-                    }
-                </select>
-            </div>
-        </div>
-
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <label>CASE:</label>
-                <select id="caseSelect" name="selectedProducts" class="form-control">
-                    <option value="">-- Chọn CASE --</option>
-                    @foreach (var caseProduct in Model.Where(p => p.CategoryId == 3)) // CategoryId = 3 là CASE
-                    {
-                        <option value="@caseProduct.Id">@caseProduct.Name - @caseProduct.Price.ToString("C")</option>
-                    }
-                </select>
-            </div>
-        </div>
-
-        <!-- Thêm các danh mục khác ở đây như VGA, Mainboard, PSU -->
-        
-        <div class="row mt-3">
+        <!-- Nút Submit -->
+        <div class="row mt-4">
             <div class="col-md-12 text-center">
-                <button type="submit" class="btn btn-success">Thêm tất cả vào giỏ hàng</button>
+                <button type="submit" class="btn btn-primary btn-lg">Thêm tất cả vào giỏ hàng</button>
             </div>
         </div>
     </form>
 </div>
 
-
 @section Scripts {
     <script>
+        // Hàm lấy các sản phẩm theo danh mục (nếu cần thiết)
         async function getProductsByCategory(categoryId) {
             if (categoryId) {
                 const response = await fetch(`/Home/ShowProductsByCategory?categoryId=${categoryId}`);
@@ -66,7 +83,7 @@
                 productListDiv.innerHTML = "";
 
                 products.forEach(product => {
-                    productListDiv.innerHTML += `<div>${product.Name} - ${product.Price.toLocaleString('vi-VN')} VNĐ</div>`;
+                    productListDiv.innerHTML += `<div> ${product.Name} - ${product.Price.toLocaleString('vi-VN')} VNĐ</div>`;
                 });
             } else {
                 document.getElementById("productList").innerHTML = "";
@@ -74,3 +91,106 @@
         }
     </script>
 }
+
+
+
+<style>
+    /* Toàn bộ form */
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Tiêu đề */
+    h2 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    /* Các phần tử trong list-group */
+    .list-group-item {
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+        .list-group-item h5 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+    /* Các phần tử select */
+    .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        width: 100%;
+        transition: border-color 0.3s ease;
+    }
+
+        /* Tạo hiệu ứng border khi chọn */
+        .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+    /* Các nhãn cho select */
+    .form-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    /* Cột của các ô select */
+    .col-md-8 {
+        display: flex;
+        align-items: center;
+    }
+
+    .col-md-4 {
+        display: flex;
+        justify-content: flex-end; /* Căn chỉnh các select sang bên phải */
+        align-items: center;
+    }
+
+    /* Các phần tử button */
+    button {
+        background-color: #28a745;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        font-size: 1.2rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+        /* Màu khi hover vào nút */
+        button:hover {
+            background-color: #218838;
+        }
+
+    /* Margin dưới các phần tử */
+    .mb-3 {
+        margin-bottom: 15px;
+    }
+
+    /* Tạo hiệu ứng hover cho các mục sản phẩm */
+    select option {
+        font-size: 1rem;
+        padding: 5px;
+    }
+
+        select option:hover {
+            background-color: #f8f9fa;
+        }
+
+
+</style>

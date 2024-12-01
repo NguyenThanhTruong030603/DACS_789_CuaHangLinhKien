@@ -61,9 +61,9 @@
             </div>
             <!-- Notes -->
             <div class="col-md-12 mb-3">
-                <label for="notes" class="checkout-label form-label">Ghi chú <i class="fas fa-sticky-note"></i></label>
-                <textarea id="notes" class="checkout-input form-control" placeholder="Nhập ghi chú (nếu có)"></textarea>
-                <span class="checkout-validation text-danger" id="notesValidation"></span>
+                <label asp-for="Notes" class="checkout-label form-label">Ghi chú <i class="fas fa-sticky-note"></i></label>
+                <textarea asp-for="Notes" id="Notes" class="checkout-input form-control" placeholder="Nhập ghi chú (nếu có)"></textarea>
+                <span asp-validation-for="Notes" class="checkout-validation text-danger" id="notesValidation"></span>
             </div>
         </div>
 

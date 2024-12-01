@@ -1,3 +1,67 @@
 ﻿@model int
-<h2>Order Completed</h2>
-<p>Your order with ID @Model has been placed successfully.</p>
+<div class="order-completed">
+	<h2 class="title">🎉 Chúc Mừng Bạn! 🎉</h2>
+	<p class="message">Đơn hàng của bạn với mã số <strong>@Model</strong> đã được đặt thành công. Cảm ơn bạn đã mua sắm tại cửa hàng của chúng tôi!</p>
+	<img src="~/images/thankyou.jpg" alt="Cảm ơn" class="thank-you-img">
+	<button class="continue-shopping" onclick="window.location.href='/'">Tiếp tục mua sắm</button>
+
+</div>
+</div>
+
+<style>
+	.order-completed {
+		text-align: center;
+		margin-top: 50px;
+		padding: 30px;
+		background-color: #fff;
+		border-radius: 10px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		width: 80%;
+		max-width: 600px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.title {
+		font-size: 2.5rem;
+		color: #28a745;
+		margin-bottom: 15px;
+		font-weight: bold;
+		animation: bounce 1s ease-in-out;
+	}
+
+	.message {
+		font-size: 1.2rem;
+		color: #555;
+		margin: 0 auto 30px; /* Center the message with auto left and right margins */
+		font-style: italic;
+		line-height: 1.5;
+		text-align: center; /* Ensure the text is centered */
+		max-width: 100%; /* Ensure the message does not overflow */
+		width: 100%; /* Make sure it takes up the full available width */
+	}
+
+	.thank-you-img {
+		width: 100%;
+		height: auto;
+		max-width: 400px;
+		margin-bottom: 30px;
+		border-radius: 8px;
+	}
+
+	.continue-shopping {
+		background-color: #007bff;
+		color: white;
+		padding: 10px 20px;
+		font-size: 1rem;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		transition: background-color 0.3s;
+	}
+
+		.continue-shopping:hover {
+			background-color: #0056b3;
+		}
+
+</style>
