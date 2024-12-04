@@ -2,89 +2,125 @@
 
 @{
     ViewData["Title"] = "Index";
-    //decimal total = 0;
     decimal total = Convert.ToDecimal(ViewData["Total"]);
 }
 
-<h1 class="text-center my-4">Đơn Hàng Chờ Xác Nhận</h1>
+<h1 class="text-center my-4 text-primary">
+    <i class="fas fa-list-alt me-2"></i>Đơn Hàng Chờ Xác Nhận
+</h1>
 
 @using (Html.BeginForm("Search", "OrderListAdmin", FormMethod.Get))
 {
-    <p>
-        <div style="text-align: right;">
-            Tìm kiếm: <input type="text" name="searchString" />
-            <input type="submit" value="Tìm kiếm" class="btn btn-primary" />
-        </div>
-    </p>
+    <div class="search-bar input-group mb-4">
+        <input type="text" name="searchString" id="searchString" class="form-control" placeholder="Tìm kiếm đơn hàng..." />
+        <button class="btn btn-primary" type="submit">
+            <i class="fas fa-search"></i> Tìm kiếm
+        </button>
+    </div>
 }
 
-<div class="card-header">
-    <h3 class="card-title">Danh Sách Đơn Hàng</h3>
-</div>
-<!-- /.card-header -->
-<div class="card-body">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Mã</th>
-                <th>Thời gian</th>
-                <th>Mã giảm giá</th>
-                <th>Phần trăm giảm</th>
-                <th>Tổng cộng</th>
-                <th>Phương thức thanh toán</th>
-                <th>Địa chỉ giao hàng</th>
-                <th>Ghi chú</th>
-    
-                <th>Trạng thái</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var order in Model)
-            {
+<div class="card shadow-lg mb-5">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0">
+            <i class="fas fa-shopping-cart me-2"></i>Danh Sách Đơn Hàng
+        </h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
                 <tr>
-                    <td>@order.Id</td>
-                    <td>@order.OrderDate</td>
-                    <td>@order.DiscountCode</td>
-                    <td>@order.DiscountPercentage</td>
-                    <td>@order.TotalPrice</td>
-                    <td>@order.PaymentMethod</td>
-                    <td>@order.ShippingAddress</td>
-                    <td>@order.Notes</td>
-
-                    <td>
-                        <form asp-action="ChangeStatus" asp-controller="OrderListAdmin" method="post">
-                            <select name="newStatus">
-                               
-                                <option value="ĐãXácNhận">Đã xác nhận</option>
-                                <option value="ĐãGiao">Đã giao</option>
-                                <option value="ĐãGiaoThànhCông">Đã giao thành công</option>
-                                <option value="ĐãHủy">Đã hủy</option>
-                            </select>
-                            <input type="hidden" name="orderId" value="@order.Id" />
-                            <button type="submit">Thay đổi</button>
-                        </form>
-                    </td>
-                    <td>
-                        <!-- Link đến trang chi tiết đơn hàng -->
-                        <a href="@Url.Action("OrderDetails", "OrderListAdmin", new { orderId = order.Id })">Chi tiết</a>
-                    </td>
+                    <th><i class="fas fa-hashtag"></i> Mã</th>
+                    <th><i class="fas fa-clock"></i> Thời gian</th>
+                    <th><i class="fas fa-tag"></i> Mã giảm giá</th>
+                    <th><i class="fas fa-percentage"></i> Phần trăm giảm</th>
+                    <th><i class="fas fa-dollar-sign"></i> Tổng cộng</th>
+                    <th><i class="fas fa-sticky-note"></i> Phương Thức Thanh Toán</th>
+                    <th><i class="fas fa-tasks"></i> Trạng thái</th>
+                    <th><i class="fas fa-info-circle"></i> Chi tiết</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @if (string.IsNullOrEmpty(order.DiscountCode))
+                            {
+                                <span class="text-muted">Không có</span>
+                            }
+                            else
+                            {
+                                @order.DiscountCode
+                            }
+                        </td>
+
+                        <td>
+                            @if (order.DiscountPercentage.HasValue)
+                            {
+                                @String.Format("{0:N0} %", order.DiscountPercentage.Value)
+                            }
+                            else
+                            {
+                                <span class="text-muted">0 %</span>
+                            }
+                        </td>
+
+                        <td>
+                            @String.Format("{0:N0}", order.TotalPrice) VND
+                        </td>
+
+                        <td>
+                            @if (string.IsNullOrEmpty(order.PaymentMethod))
+                            {
+                                <span class="text-muted">Không có</span>
+                            }
+                            else
+                            {
+                                @order.PaymentMethod
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="ChangeStatus" asp-controller="OrderListAdmin" method="post">
+                                <div class="input-group">
+                                    <select name="newStatus" class="form-select">
+                                        <option value="ĐãXácNhận">Chờ xác nhận</option>
+                                        <option value="ĐãXácNhận">Đã xác nhận</option>
+                                        <option value="ĐãGiao">Đã giao</option>
+                                        <option value="ĐãGiaoThànhCông">Đã giao thành công</option>
+                                        <option value="ĐãHủy">Đã hủy</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                                <input type="hidden" name="orderId" value="@order.Id" />
+                            </form>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("OrderDetails", "OrderListAdmin", new { orderId = order.Id })"
+                               class="btn btn-info btn-sm">
+                                <i class="fas fa-eye"></i> Xem
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div class="container">
+<div class="pagination-container text-center">
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             @if (Model.HasPreviousPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="?page=1">Đầu</a>
+                    <a class="page-link" href="?page=1"><i class="fas fa-angle-double-left"></i> Đầu</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page=@(Model.PageNumber - 1)">Trước</a>
+                    <a class="page-link" href="?page=@(Model.PageNumber - 1)"><i class="fas fa-angle-left"></i> Trước</a>
                 </li>
             }
             @for (int i = 1; i <= Model.PageCount; i++)
@@ -96,21 +132,82 @@
             @if (Model.HasNextPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="?page=@(Model.PageNumber + 1)">Tiếp</a>
+                    <a class="page-link" href="?page=@(Model.PageNumber + 1)">Tiếp <i class="fas fa-angle-right"></i></a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page=@Model.PageCount">Cuối</a>
+                    <a class="page-link" href="?page=@Model.PageCount">Cuối <i class="fas fa-angle-double-right"></i></a>
                 </li>
             }
         </ul>
     </nav>
 </div>
+<style>
+    h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
 
+.search-bar {
+    max-width: 400px;
+    margin: auto;
+}
 
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+}
 
-<div class="card-body">
+.card-title {
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.card-title i {
+    font-size: 1.2rem;
+}
+
+.table {
+    font-size: 0.95rem;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table-light {
+    background-color: #f8f9fa;
+}
+
+.table-bordered {
+    border: 1px solid #ddd;
+}
+
+.btn {
+    border-radius: 5px;
+}
+
+.pagination .page-item .page-link {
+    border-radius: 5px;
+}
+
+.pagination .active .page-link {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+.input-group .form-select {
+    border-radius: 0.375rem;
+}
+
+</style>
+@* <div class="card-body">
     <h5 class="btn btn-block btn-lg" style="width: 100%; cursor: default; background-color: #ffc107;">
         Tổng tiền:
         <span style="font-weight: bold; color: #dc3545;">@total</span>
     </h5>
-</div>
+</div> *@

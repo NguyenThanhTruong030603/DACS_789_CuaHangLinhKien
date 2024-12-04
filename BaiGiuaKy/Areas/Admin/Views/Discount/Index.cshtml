@@ -1,4 +1,5 @@
 ﻿@model X.PagedList.IPagedList<BaiGiuaKy.Models.Discount>
+
 @section Scripts
 {
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -13,79 +14,72 @@
     </script>
 }
 
+<h1 class="text-center my-4 text-primary">
+    <i class="fas fa-tag me-2"></i>Mã Giảm Giá
+</h1>
 
-<h1 class="text-center my-4">Mã Giảm Giá</h1>
 @using (Html.BeginForm("Search", "Discount", FormMethod.Get))
 {
-    <p>
-        <div style="text-align: right;">
-            Tìm kiếm: <input type="text" id="autocomplete" name="searchString" />
-            <input type="submit" value="Tìm kiếm" class="btn btn-primary">
-        </div>
-    </p>
+    <div class="search-bar input-group mb-4">
+        <input type="text" name="searchString" id="autocomplete" class="form-control" placeholder="Tìm kiếm mã giảm giá..." />
+        <button class="btn btn-primary" type="submit">
+            <i class="fas fa-search"></i> Tìm kiếm
+        </button>
+    </div>
 }
 
-<div class="card-header">
-    <h3 class="card-title">Danh Sách Mã Giảm Giá</h3>
+<!-- Add Discount Button -->
+<div class="mb-3 text-end">
+    <a asp-action="Add" class="btn btn-success">
+        <i class="fas fa-plus-circle"></i> Thêm Mã Giảm Giá
+    </a>
 </div>
-<!-- /.card-header -->
-<div class="card-body">
 
-    <table class="table">
-        <p>
-            <a asp-action="Add">Thêm Mã Giảm Giá</a>
-        </p>
-        <table id="example1" class="table table-bordered table-striped">
-
-            <thead>
-            <thead>
+<div class="card shadow-lg mb-5">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0">
+            <i class="fas fa-list me-2"></i>Danh Sách Mã Giảm Giá
+        </h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
                 <tr>
-                    
-                    <th>Mã giảm giá</th>
-                    <th>Phần trăm giảm</th>
-                    <th>Ngày hết hạn</th>
-                    <th>Hành động</th>
+                    <th><i class="fas fa-hashtag"></i> Mã giảm giá</th>
+                    <th><i class="fas fa-percentage"></i> Phần trăm giảm</th>
+                    <th><i class="fas fa-calendar-alt"></i> Ngày hết hạn</th>
+                    <th><i class="fas fa-cogs"></i> Hành động</th>
                 </tr>
             </thead>
-            </thead>
             <tbody>
-                @foreach (var category in Model)
+                @foreach (var discount in Model)
                 {
                     <tr>
-                        
+                        <td>@discount.Code</td>
+                        <td>@discount.Percentage %</td>
+                        <td>@discount.ExpirationDate.ToString("dd/MM/yyyy")</td>
                         <td>
-                            @category.Code
-                        </td>
-
-                        <td>
-                            @category.Percentage
-                        </td>
-                        <td>
-                            @category.ExpirationDate
-                        </td>
-                        <td>
-                           
-                            <a asp-action="Update" asp-route-id="@category.Id" class="btn btn-secondary"><i class="fa fa-pencil"></i>Chỉnh sửa</a> 
-                            
-
+                            <a asp-action="Update" asp-route-id="@discount.Id" class="btn btn-secondary">
+                                <i class="fa fa-pencil"></i> Chỉnh sửa
+                            </a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-</div>
+    </div>
 </div>
 
-<div class="container">
+<div class="pagination-container text-center">
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             @if (Model.HasPreviousPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="?page=1">Đầu</a>
+                    <a class="page-link" href="?page=1"><i class="fas fa-angle-double-left"></i> Đầu</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page=@(Model.PageNumber - 1)">Trước</a>
+                    <a class="page-link" href="?page=@(Model.PageNumber - 1)"><i class="fas fa-angle-left"></i> Trước</a>
                 </li>
             }
             @for (int i = 1; i <= Model.PageCount; i++)
@@ -97,13 +91,80 @@
             @if (Model.HasNextPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="?page=@(Model.PageNumber + 1)">Tiếp</a>
+                    <a class="page-link" href="?page=@(Model.PageNumber + 1)">Tiếp <i class="fas fa-angle-right"></i></a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page=@Model.PageCount">Cuối</a>
+                    <a class="page-link" href="?page=@Model.PageCount">Cuối <i class="fas fa-angle-double-right"></i></a>
                 </li>
             }
         </ul>
     </nav>
 </div>
 
+<style>
+    h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .search-bar {
+        max-width: 400px;
+        margin: auto;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+        .card-title i {
+            font-size: 1.2rem;
+        }
+
+    .table {
+        font-size: 0.95rem;
+    }
+
+        .table th, .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+    .table-light {
+        background-color: #f8f9fa;
+    }
+
+    .table-bordered {
+        border: 1px solid #ddd;
+    }
+
+    .btn {
+        border-radius: 5px;
+    }
+
+    .pagination .page-item .page-link {
+        border-radius: 5px;
+    }
+
+    .pagination .active .page-link {
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .input-group .form-select {
+        border-radius: 0.375rem;
+    }
+
+    .pagination-container {
+        margin-top: 20px;
+    }
+</style>

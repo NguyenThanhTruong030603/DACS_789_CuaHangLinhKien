@@ -1,7 +1,7 @@
 ﻿@model X.PagedList.IPagedList<ApplicationUser>
 
 @section Scripts
-    {
+{
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -14,28 +14,39 @@
     </script>
 }
 
+<h1 class="text-center my-4 text-primary">
+    <i class="fas fa-users me-2"></i>Danh Sách Tài Khoản
+</h1>
+
 @using (Html.BeginForm("Search", "Users", FormMethod.Get))
 {
-    <p>
-        <div style="text-align: right;">
-            Tìm kiếm: <input type="text" id="autocomplete" name="searchString" />
-            <input type="submit" value="Tìm kiếm" class="btn btn-primary">
-        </div>
-    </p>
-
-    <div class="card-header">
-        <h3 class="card-title">Danh Sách Tài Khoản</h3>
+    <div class="search-bar input-group mb-4">
+        <input type="text" name="searchString" id="autocomplete" class="form-control" placeholder="Tìm kiếm tài khoản..." />
+        <button class="btn btn-primary" type="submit">
+            <i class="fas fa-search"></i> Tìm kiếm
+        </button>
     </div>
-    <!-- /.card-header -->
+}
+
+<div class="card shadow-lg mb-5">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0">
+            <i class="fas fa-users me-2"></i>Danh Sách Tài Khoản
+        </h3>
+    </div>
     <div class="card-body">
-        <table id="example1" class="table table-bordered table-striped">
-            <thead>
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
                 <tr>
-                    <th>Tên tài khoản</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
+                    <th><i class="fas fa-user"></i> Tên tài khoản</th>
+                    <th><i class="fas fa-envelope"></i> Email</th>
+                    <th><i class="fas fa-phone"></i> Số điện thoại</th>
+                    <th><i class="fas fa-user-tag"></i> Vai trò</th>
+                    <th><i class="fas fa-check-circle"></i> Trạng thái</th>
+                    <th><i class="fas fa-cogs"></i> Hành động</th>
+                    <th><i class="fas fa-user-tag"></i> Đổi vai trò</th>
+
+                    
                 </tr>
             </thead>
             <tbody>
@@ -45,60 +56,219 @@
                         <td>@user.FullName</td>
                         <td>@user.Email</td>
                         <td>@user.PhoneNumber</td>
-                        <td>@(user.IsBlocked ? "Chặn" : "Hoạt động")</td>
                         <td>
-                            <form asp-controller="Users" asp-action="ResetPassword" asp-route-userId="@user.Id" method="post">
-                                <button type="submit">Đặt lại mật khẩu</button>
-                            </form>
-                            @if (user.IsBlocked)
+                            @if (ViewData["UserRoles"] != null)
                             {
-                                <form asp-controller="Users" asp-action="UnblockAccount" method="post">
-                                    <input type="hidden" name="userId" value="@user.Id" />
-                                    <button type="submit">Mở chặn</button>
-                                </form>
-                            }
-                            else
-                            {
-                                <form asp-controller="Users" asp-action="BlockAccount" method="post">
-                                    <input type="hidden" name="userId" value="@user.Id" />
-                                    <button type="submit">Chặn</button>
-                                </form>
+                                var userRoles = (Dictionary<string, IList<string>>)ViewData["UserRoles"];
+                                var roles = userRoles.ContainsKey(user.Id) ? userRoles[user.Id] : new List<string>();
+                                @foreach (var role in roles)
+                                {
+                                    <span class="badge bg-secondary">@role</span>
+                                }
                             }
                         </td>
+                        <td>@(user.IsBlocked ? "Chặn" : "Hoạt động")</td>
+                        <td>
+
+                            @if (ViewData["UserRoles"] != null)
+                            {
+                                var userRoles = (Dictionary<string, IList<string>>)ViewData["UserRoles"];
+                                var roles = userRoles.ContainsKey(user.Id) ? userRoles[user.Id] : new List<string>();
+
+                                if (!roles.Contains("Admin"))
+                                {
+                                    <form asp-controller="Users" asp-action="ResetPassword" asp-route-userId="@user.Id" method="post" class="d-inline-block">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-sync-alt"></i> Đặt lại mật khẩu
+                                        </button>
+                                    </form>
+                                    @if (user.IsBlocked)
+                                    {
+                                        <form asp-controller="Users" asp-action="UnblockAccount" method="post" class="d-inline-block">
+                                            <input type="hidden" name="userId" value="@user.Id" />
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="fas fa-unlock-alt"></i> Mở chặn
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-controller="Users" asp-action="BlockAccount" method="post" class="d-inline-block">
+                                            <input type="hidden" name="userId" value="@user.Id" />
+                                            <button type="submit" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-lock"></i> Chặn
+                                            </button>
+                                        </form>
+                                    }
+                                   
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Không thao tác được</span>
+                                }
+                            }
+                        <td>
+
+                                @if (ViewData["UserRoles"] != null)
+                                {
+                                    var userRoles = (Dictionary<string, IList<string>>)ViewData["UserRoles"];
+                                    var roles = userRoles.ContainsKey(user.Id) ? userRoles[user.Id] : new List<string>();
+
+                                    if (!roles.Contains("Admin"))
+                                    {
+                                   
+                                    <div class="change-role-container">
+                                        <form method="post" asp-action="ChangeRole">
+                                            <input type="hidden" name="userId" value="@user.Id" />
+                                            <div class="form-group d-flex align-items-center">
+                                                <select name="newRole" class="form-select">
+                                                    <option value="Admin">Admin</option>
+                                                    <option value="Employee">Employee</option>
+                                                    <option value="Customer">Customer</option>
+                                                </select>
+                                                <button type="submit" class="btn btn-primary ms-2">
+                                                    <i class="fas fa-user-tag"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    }
+                                    else
+                                    {
+                                    <span class="text-muted">Không thao tác được</span>
+                                    }
+                                }
+                        </td>
+                        </td>
+                        
+                        
                     </tr>
                 }
             </tbody>
         </table>
     </div>
+</div>
 
-    <div class="container">
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                @if (Model.HasPreviousPage)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1">Đầu</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=@(Model.PageNumber - 1)">Trước</a>
-                    </li>
-                }
-                @for (int i = 1; i <= Model.PageCount; i++)
-                {
-                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                        <a class="page-link" href="?page=@i">@i</a>
-                    </li>
-                }
-                @if (Model.HasNextPage)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="?page=@(Model.PageNumber + 1)">Tiếp</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=@Model.PageCount">Cuối</a>
-                    </li>
-                }
-            </ul>
-        </nav>
-    </div>
-}
+<div class="pagination-container text-center">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=1"><i class="fas fa-angle-double-left"></i> Đầu</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(Model.PageNumber - 1)"><i class="fas fa-angle-left"></i> Trước</a>
+                </li>
+            }
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="?page=@i">@i</a>
+                </li>
+            }
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(Model.PageNumber + 1)">Tiếp <i class="fas fa-angle-right"></i></a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=@Model.PageCount">Cuối <i class="fas fa-angle-double-right"></i></a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<style>
+    h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .search-bar {
+        max-width: 400px;
+        margin: auto;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+        .card-title i {
+            font-size: 1.2rem;
+        }
+
+    .table {
+        font-size: 0.95rem;
+    }
+
+        .table th, .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+    .table-light {
+        background-color: #f8f9fa;
+    }
+
+    .table-bordered {
+        border: 1px solid #ddd;
+    }
+
+    .btn {
+        border-radius: 5px;
+    }
+
+    .pagination .page-item .page-link {
+        border-radius: 5px;
+    }
+
+    .pagination .active .page-link {
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .input-group .form-select {
+        border-radius: 0.375rem;
+    }
+
+    .change-role-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .change-role-container .form-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* Khoảng cách giữa dropdown và nút */
+        }
+
+        .change-role-container .form-select {
+            width: auto; /* Tự động co theo nội dung */
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+            border-radius: 0.25rem;
+        }
+
+        .change-role-container .btn {
+            font-size: 0.85rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+        }
+
+            .change-role-container .btn i {
+                margin-right: 0.3rem; /* Khoảng cách giữa icon và text */
+            }
+</style>

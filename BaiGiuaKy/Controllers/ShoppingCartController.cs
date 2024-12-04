@@ -227,8 +227,8 @@ namespace BaiGiuaKy.Controllers
             
             HttpContext.Session.SetObjectAsJson("Cart", cart);
             TempData["SuccessMessage"] = "Đã thêm vào giỏ hàng thành công!";
-            return RedirectToAction("AddToCart", "ShoppingCart");
-            
+            return Redirect(Request.Headers["Referer"].ToString());
+
 
         }
         
@@ -376,8 +376,13 @@ namespace BaiGiuaKy.Controllers
             var response = await _momoService.CreatePaymentAsync(model);
             return Redirect(response.PayUrl);
         }
-        
 
+        public IActionResult ClearCart()
+        {
+            HttpContext.Session.Remove("Cart");
+            TempData["Message"] = "Giỏ hàng đã được xóa!";
+            return RedirectToAction("Index"); // Quay lại trang giỏ hàng
+        }
 
         [HttpGet]
         public async Task<IActionResult> PaymentCallBackAsync()

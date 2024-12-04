@@ -1,40 +1,145 @@
 ﻿@model BaiGiuaKy.Models.Order
 
-<h2>Thông tin đơn hàng</h2>
+<div id="order-printable-area" class="order-container p-4 border rounded shadow bg-white">
+    <div class="text-center">
+        <h2 class="order-title fw-bold mb-3 text-primary">Đơn Hàng</h2>
+        <h4 class="order-subtitle mb-4 text-secondary">
+            Chi tiết đặt hàng - <strong class="text-dark">#@Model.Id</strong>
+        </h4>
+    </div>
 
-<h2>Order Details: @Model.Id</h2>
+    <div class="order-details mb-3">
+        <p class="order-detail text-secondary">
+            <i class="fas fa-user text-primary me-2"></i>
+            <strong>Tên khách hàng:</strong> @Model.ApplicationUser.FullName
+        </p>
+        <p class="order-detail text-secondary">
+            <i class="fas fa-phone text-success me-2"></i>
+            <strong>Số điện thoại:</strong> @Model.ApplicationUser.PhoneNumber
+        </p>
+        <p class="order-detail text-secondary">
+            <i class="fas fa-map-marker-alt text-danger me-2"></i>
+            <strong>Địa chỉ giao hàng:</strong> @Model.ShippingAddress
+        </p>
+        <p class="order-detail text-secondary">
+            <i class="fas fa-sticky-note text-warning me-2"></i>
+            <strong>Ghi chú:</strong> @Model.Notes
+        </p>
+    </div>
 
-<table class="table">
-    
-    <thead>
-        <tr>
-            <th>Sản phẩm</th>
-            <th>Số lượng</th>
-            <th>Giá</th>
-            <th>Thành tiền</th>
+    <hr class="order-divider my-4">
 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var detail in Model.OrderDetails)
-        {
-            <tr>
-                <td>@detail.Product.Name</td>
-                <td>@detail.Quantity</td>
-                <td>@detail.Price</td>
-                <td>@(detail.Price*detail.Quantity)</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="order-table table table-bordered table-striped text-center">
+            <thead class="order-table-header bg-primary text-white">
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Giá (VND)</th>
+                    <th>Thành tiền (VND)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detail in Model.OrderDetails)
+                {
+                    <tr>
+                        <td class="text-start">
+                            <i class="fas fa-box text-info me-2"></i> @detail.Product.Name
+                        </td>
+                        <td>@detail.Quantity</td>
+                        <td>@String.Format("{0:N0}", detail.Price)</td>
+                        <td>@String.Format("{0:N0}", detail.Price * detail.Quantity)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-<div>
-    <h3>Tổng cộng: @Model.TotalPrice.ToString("C")</h3>
+    <div class="order-total text-end mt-3">
+        <h4 class="text-danger fw-bold">
+            <i class="fas fa-coins me-2"></i>
+            Tổng cộng: @String.Format("{0:N0}", Model.TotalPrice) VND
+        </h4>
+    </div>
 </div>
-<div class="card-footer text-muted text-center">
-    <a asp-action="Index" class="btn btn-outline-primary">Quay lại </a>
+
+<!-- Action buttons -->
+<div class="order-actions text-center mt-5">
+    <a asp-action="index" class="btn order-back-btn btn-outline-primary me-3 px-4">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+
+    <button class="btn order-print-btn btn-info px-4" onclick="printOrder()">
+        <i class="fas fa-print"></i> In đơn hàng
+    </button>
 </div>
 
-<div>
-    <!-- Các tùy chọn khác như reorder, in đơn hàng, v.v... -->
+<div class="order-footer text-center text-muted mt-4 small">
+    <p>© 2024 Công ty TNHH XYZ. All Rights Reserved.</p>
 </div>
+
+<script>
+    // Print function to print the order details and header (inside #order-printable-area)
+    function printOrder() {
+        var printContents = document.getElementById("order-printable-area").innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+</script>
+
+<style>
+    /* Order page styles */
+    .order-container {
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    .order-title {
+        color: #0d6efd;
+    }
+
+    .order-subtitle {
+        font-size: 1.25rem;
+        color: #6c757d;
+    }
+
+    .order-details {
+        font-size: 1rem;
+    }
+
+    .order-detail i {
+        margin-right: 8px;
+    }
+
+    .order-divider {
+        border-color: #ddd;
+    }
+
+    .order-table {
+        margin-top: 20px;
+    }
+
+    .order-table-header {
+        background-color: #007bff !important;
+    }
+
+    .order-total {
+        font-size: 1.25rem;
+    }
+
+    .order-actions .btn {
+        font-size: 1rem;
+    }
+
+    .order-back-btn i,
+    .order-print-btn i {
+        margin-right: 5px;
+    }
+
+    .order-footer {
+        font-size: 0.85rem;
+    }
+</style>

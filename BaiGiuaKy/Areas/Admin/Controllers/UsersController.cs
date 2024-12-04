@@ -15,10 +15,11 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
     public class UsersController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-
-        public UsersController(UserManager<ApplicationUser> userManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
         [HttpGet]
         public IActionResult AutocompleteSearch(string term)
@@ -30,7 +31,36 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
             return Ok(user);
         }
 
-        
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin)]
+        public async Task<IActionResult> ChangeRole(string userId, string newRole)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Get current roles of the user
+            var currentRoles = await _userManager.GetRolesAsync(user);
+
+            // Remove the user from all current roles
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+            // Add the new role to the user
+            var result = await _userManager.AddToRoleAsync(user, newRole);
+            if (result.Succeeded)
+            {
+                // Successfully changed the role
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                // Failed to change the role
+                return BadRequest("Failed to change role.");
+            }
+        }
+
 
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin)]
@@ -50,7 +80,13 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
         public async Task<IActionResult> Index(int? page)
         {
             var users = await _userManager.Users.ToListAsync();
-
+            var userRoles = new Dictionary<string, IList<string>>(); // Dictionary to store user roles
+            foreach (var user in users)
+            {
+                userRoles[user.Id] = await _userManager.GetRolesAsync(user); // Get roles for each user
+            }
+            // Pass userRoles to the view
+            ViewData["UserRoles"] = userRoles;
             int pageSize = 4;
             int pageNumber = (page ?? 1);
             return View(await users.ToPagedListAsync(pageNumber, pageSize));
@@ -71,6 +107,7 @@ namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
             var result = await _userManager.ResetPasswordAsync(user, resetToken, "Hutech@123");
             if (result.Succeeded)
             {
+
                 // Password reset successfully
                 // You can redirect to a success page or do something else
                 return RedirectToAction("Index");

@@ -1,59 +1,79 @@
 ﻿@model BaiGiuaKy.Models.Order
 
-<!-- Content to print starts here -->
-<div id="printableArea">
-    <h2 class="text-center my-4">Đơn hàng của bạn</h2>
+<div id="order-printable-area" class="order-container p-4 border rounded shadow bg-white">
+    <div class="text-center">
+        <h2 class="order-title fw-bold mb-3 text-primary">Đơn Hàng Của Bạn</h2>
+        <h4 class="order-subtitle mb-4 text-secondary">
+            Chi tiết đặt hàng - <strong class="text-dark">#@Model.Id</strong>
+        </h4>
+    </div>
 
-    <h3 class="text-center mb-3">Chi tiết đặt hàng - <strong>@Model.Id</strong></h3>
-    <p class="text-center mb-4"><strong>Địa chỉ giao hàng:</strong> @Model.ShippingAddress</p>
-    <p class="text-center mb-4"><strong>Ghi chú:</strong> @Model.Notes</p>
+    <div class="order-details mb-3">
+        <p class="order-detail text-secondary">
+            <i class="fas fa-map-marker-alt text-danger me-2"></i>
+            <strong>Địa chỉ giao hàng:</strong> @Model.ShippingAddress
+        </p>
+        <p class="order-detail text-secondary">
+            <i class="fas fa-sticky-note text-warning me-2"></i>
+            <strong>Ghi chú:</strong> @Model.Notes
+        </p>
+    </div>
 
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>Sản phẩm</th>
-                <th>Số lượng</th>
-                <th>Giá</th>
-                <th>Thành tiền</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var detail in Model.OrderDetails)
-            {
+    <hr class="order-divider my-4">
+
+    <div class="table-responsive">
+        <table class="order-table table table-bordered table-striped text-center">
+            <thead class="order-table-header bg-primary text-white">
                 <tr>
-                    <td>@detail.Product.Name</td>
-                    <td>@detail.Quantity</td>
-                    <td>@detail.Price VND</td>
-                    <td>@(detail.Price * detail.Quantity) VND</td>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Giá (VND)</th>
+                    <th>Thành tiền (VND)</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var detail in Model.OrderDetails)
+                {
+                    <tr>
+                        <td class="text-start">
+                            <i class="fas fa-box text-info me-2"></i> @detail.Product.Name
+                        </td>
+                        <td>@detail.Quantity</td>
+                        <td>@String.Format("{0:N0}", detail.Price)</td>
+                        <td>@String.Format("{0:N0}", detail.Price * detail.Quantity)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-    <div class="d-flex justify-content-between align-items-center">
-        <h3 class="text-danger"><strong>Tổng cộng: @Model.TotalPrice VND</strong></h3>
+    <div class="order-total text-end mt-3">
+        <h4 class="text-danger fw-bold">
+            <i class="fas fa-coins me-2"></i>
+            Tổng cộng: @String.Format("{0:N0}", Model.TotalPrice) VND
+        </h4>
     </div>
 </div>
-<!-- Content to print ends here -->
+
 <!-- Action buttons -->
-<div class="d-flex justify-content-center mt-4">
-    <a asp-action="OrderList" class="btn btn-outline-primary mx-2">
+<div class="order-actions text-center mt-5">
+    <a asp-action="OrderList" class="btn order-back-btn btn-outline-primary me-3 px-4">
         <i class="fas fa-arrow-left"></i> Quay lại
     </a>
 
-    <a href="javascript:void(0);" class="btn btn-info mx-2" onclick="printOrder()">
+    <button class="btn order-print-btn btn-info px-4" onclick="printOrder()">
         <i class="fas fa-print"></i> In đơn hàng
-    </a>
+    </button>
 </div>
 
-<div class="card-footer text-muted text-center mt-5">
-    <p>© 2024 Công ty TNHH XYZ</p>
+<div class="order-footer text-center text-muted mt-4 small">
+    <p>© 2024 Công ty TNHH XYZ. All Rights Reserved.</p>
 </div>
 
 <script>
-    // Print function to print the order details and header (inside #printableArea)
+    // Print function to print the order details and header (inside #order-printable-area)
     function printOrder() {
-        var printContents = document.getElementById("printableArea").innerHTML;
+        var printContents = document.getElementById("order-printable-area").innerHTML;
         var originalContents = document.body.innerHTML;
 
         document.body.innerHTML = printContents;
@@ -63,27 +83,55 @@
 </script>
 
 <style>
-    /* General styling */
-    h2, h3 {
-        font-weight: bold;
+    /* Order page styles */
+    .order-container {
+        max-width: 1100px;
+        margin: auto;
     }
 
-    .table th {
-        background-color: #f8f9fa;
+    .order-title {
+        color: #0d6efd;
     }
 
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f1f1f1;
+    .order-subtitle {
+        font-size: 1.25rem;
+        color: #6c757d;
     }
 
-    /* Action button styles */
-    .btn i {
+    .order-details {
+        font-size: 1rem;
+    }
+
+    .order-detail i {
+        margin-right: 8px;
+    }
+
+    .order-divider {
+        border-color: #ddd;
+    }
+
+    .order-table {
+        margin-top: 20px;
+    }
+
+    .order-table-header {
+        background-color: #007bff !important;
+    }
+
+    .order-total {
+        font-size: 1.25rem;
+    }
+
+    .order-actions .btn {
+        font-size: 1rem;
+    }
+
+    .order-back-btn i,
+    .order-print-btn i {
         margin-right: 5px;
     }
 
-    /* Styling the total price */
-    .text-danger {
-        font-size: 1.2rem;
-        font-weight: bold;
+    .order-footer {
+        font-size: 0.85rem;
     }
 </style>

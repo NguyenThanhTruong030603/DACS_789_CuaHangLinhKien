@@ -258,6 +258,7 @@ namespace BaiGiuaKy.Areas.Admin.Controllers
         public async Task<IActionResult> OrderDetails(int orderId)
         {
             var order = await _context.Orders
+                                    .Include(o => o.ApplicationUser)
                                     .Include(o => o.OrderDetails)
                                         .ThenInclude(od => od.Product)
                                     .FirstOrDefaultAsync(o => o.Id == orderId);
