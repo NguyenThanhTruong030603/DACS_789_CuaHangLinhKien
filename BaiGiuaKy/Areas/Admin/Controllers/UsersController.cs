@@ -11,7 +11,7 @@ using static NuGet.Packaging.PackagingConstants;
 namespace BaiGiuaKy_Nhom3.Areas.Admin.Controllers
 {
     [Area("Admin")]
-   // [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+    [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
     public class UsersController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

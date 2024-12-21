@@ -33,14 +33,31 @@ namespace BaiGiuaKy.Controllers
                 .ToList();
             return Ok(product);
         }
-        public async Task<IActionResult> Index( int? page)
+        public async Task<IActionResult> Index( int? page, string sort)
         {
             ViewData["Title"] = "Trang Ch?";
 
             var products = await _productRepository.GetAllAsync();
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
             ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
-
+            switch (sort)
+            {
+                case "name_asc":
+                    products = products.OrderBy(p => p.Name).ToList();
+                    break;
+                case "name_desc":
+                    products = products.OrderByDescending(p => p.Name).ToList();
+                    break;
+                case "price_asc":
+                    products = products.OrderBy(p => p.Price).ToList();
+                    break;
+                case "price_desc":
+                    products = products.OrderByDescending(p => p.Price).ToList();
+                    break;
+                default:
+                    products = products.OrderBy(p => p.Name).ToList(); // Sắp xếp mặc định theo tên tăng dần
+                    break;
+            }
 
             int pageSize = 8;
             int pageNumber = (page ?? 1);
@@ -59,6 +76,8 @@ namespace BaiGiuaKy.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Display(int id)
         {
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
             ViewData["UserManager"] = _userManager;
             var product = await _context.Products
                 .Include(p => p.Comments)
@@ -86,7 +105,8 @@ namespace BaiGiuaKy.Controllers
         public async Task<IActionResult> Search(string searchString, int? page)
         {
             ViewData["Title"] = "Tìm ki?m";
-
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
             //Truy xu?t chu?i tìm ki?m t? TempData n?u có s?n.
             searchString = searchString ?? TempData["SearchString"] as string;
 
@@ -109,7 +129,8 @@ namespace BaiGiuaKy.Controllers
         public async Task<IActionResult> ShowProductsByCategories(int categoryId, int? page)
         {
             ViewData["Title"] = "San pham theo loai";
-
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
             // L?y t?t c? s?n ph?m thu?c lo?i ???c ch? ??nh
             var products = await _productRepository.GetAllAsync();
             products = products.Where(p => p.CategoryId == categoryId);
@@ -121,6 +142,8 @@ namespace BaiGiuaKy.Controllers
         }
         public async Task<IActionResult> BuildPC()
         {
+         
+           
             // Lấy tất cả sản phẩm từ cơ sở dữ liệu
             var product = await _productRepository.GetAllAsync();
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();

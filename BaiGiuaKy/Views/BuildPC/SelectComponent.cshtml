@@ -1,0 +1,108 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewBag.Title = "Chọn Thành Phần";
+    string componentType = ViewBag.ComponentType as string;
+}
+
+<div class="select-component-container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary select-component-back-btn">
+            <i class="fa fa-arrow-left"></i> Quay lại
+        </a>
+        <h1 class="select-component-title">Chọn @componentType</h1>
+    </div>
+
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm select-component-card">
+                    <img src="@product.ImageUrl" class="card-img-top select-component-image" alt="@product.Name">
+                    <div class="card-body">
+                        <h5 class="card-title text-center select-component-name">@product.Name</h5>
+                        <p class="card-text text-center text-success fw-bold select-component-price">@product.Price.ToString("#,##0") VND</p>
+                        <form action="@Url.Action("SelectComponent", "BuildPC")" method="post">
+                            <input type="hidden" name="type" value="@componentType" />
+                            <input type="hidden" name="productId" value="@product.Id" />
+                            <button type="submit" class="btn btn-success w-100 select-component-btn">
+                                <i class="fa fa-check-circle"></i> Chọn
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    /* Nút Quay Lại */
+    .select-component-back-btn {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.3s ease-in-out;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .select-component-back-btn i {
+            margin-right: 5px;
+        }
+
+        .select-component-back-btn:hover {
+            background-color: #e9ecef;
+            color: #333;
+            text-decoration: none;
+        }
+
+    /* Cải thiện Layout Chung */
+    .select-component-container {
+        background-color: #f9fafb;
+        padding: 2rem;
+    }
+
+    .select-component-title {
+        margin: 0 auto;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .select-component-card {
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+        .select-component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+    .select-component-image {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .select-component-name {
+        font-size: 1.25rem;
+        color: #222;
+    }
+
+    .select-component-price {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .select-component-btn {
+        border-radius: 20px;
+        font-size: 1rem;
+    }
+
+        .select-component-btn:hover {
+            background-color: #28a745;
+            color: #fff;
+        }
+</style>

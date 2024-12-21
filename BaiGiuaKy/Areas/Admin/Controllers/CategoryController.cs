@@ -8,7 +8,7 @@ using X.PagedList;
 namespace BaiGiuaKy.Areas.Admin.Controllers
 {
     [Area("Admin")]
- //   [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+    [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
 	public class CategoryController : Controller
     {
         private readonly IProductRepository _productRepository;

@@ -64,17 +64,20 @@ namespace BaiGiuaKy.Controllers
         [HttpPost]
         public IActionResult AddSelectedProducts(List<int> selectedProducts)
         {
+            // Kiểm tra nếu không có sản phẩm được chọn
             if (selectedProducts == null || !selectedProducts.Any())
             {
                 TempData["Error"] = "Vui lòng chọn ít nhất một sản phẩm.";
                 return RedirectToAction("Index", "Home");
             }
 
+            // Lấy giỏ hàng hiện tại từ Session hoặc tạo mới nếu chưa có
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
 
+            // Thêm từng sản phẩm đã chọn vào giỏ hàng
             foreach (var productId in selectedProducts)
             {
-                var product = _context.Products.FirstOrDefault(p => p.Id == productId);
+                var product = _productRepository.GetByIdAsync(productId).Result;
                 if (product != null)
                 {
                     var cartItem = new CartItem
@@ -82,21 +85,32 @@ namespace BaiGiuaKy.Controllers
                         ProductId = product.Id,
                         Name = product.Name,
                         Price = product.Price,
-                        Quantity = 1 // Mặc định số lượng là 1, có thể tuỳ chỉnh
+                        Quantity = 1 // Mặc định số lượng là 1
                     };
+
+                    // Giả sử có phương thức AddItem để thêm sản phẩm vào giỏ
                     cart.AddItem(cartItem);
                 }
             }
 
+            // Lưu giỏ hàng vào Session
             HttpContext.Session.SetObjectAsJson("Cart", cart);
+
+            // Thông báo thành công
             TempData["SuccessMessage"] = "Các sản phẩm đã được thêm vào giỏ hàng.";
+
+            // Redirect đến trang giỏ hàng hoặc trang sản phẩm
             return RedirectToAction("Index", "ShoppingCart");
         }
 
+
         public IActionResult Checkout()
         {
-			var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
-			if (cart == null || !cart.Items.Any())
+          
+            
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
+            if (cart == null || !cart.Items.Any())
 			{
 				TempData["Error"] = "Your cart is empty. Please add items to your cart before checking out.";
 				return RedirectToAction("Index");
@@ -238,6 +252,7 @@ namespace BaiGiuaKy.Controllers
             var cart =
             HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new
             ShoppingCart();
+            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
             return View(cart);
         }
         // Các actions khác...
@@ -263,6 +278,10 @@ namespace BaiGiuaKy.Controllers
 
         public async Task<IActionResult> OrderList()
         {
+            var cart =
+            HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new
+            ShoppingCart();
+            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
             var user = await _userManager.GetUserAsync(User);
             var orders = _context.Orders
                                  .Where(o => o.UserId == user.Id)
@@ -281,6 +300,10 @@ namespace BaiGiuaKy.Controllers
 
         public async Task<IActionResult> OrderDetails(int orderId)
         {
+            var cart =
+            HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new
+            ShoppingCart();
+            ViewBag.CartItemCount = cart.Items.Sum(item => item.Quantity);
             var user = await _userManager.GetUserAsync(User);
             var order = _context.Orders
                                 .Include(o => o.OrderDetails)

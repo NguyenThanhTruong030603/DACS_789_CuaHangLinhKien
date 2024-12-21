@@ -10,7 +10,7 @@ namespace BaiGiuaKy.Repositories
         Task UpdateAsync(Product product);
         Task DeleteAsync(int id);
         Task<List<Product>> SearchAsync(string searchString);
-        
+        Task<List<Product>> GetByCategoryAsync(string category);
     }
 
 }

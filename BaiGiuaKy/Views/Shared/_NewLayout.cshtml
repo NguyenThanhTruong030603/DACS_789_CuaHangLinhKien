@@ -29,8 +29,12 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+
 
 </head>
+
 <body>
     <header>
         <div class="header-container">
@@ -85,9 +89,14 @@
                                 </span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li>
+                                @* <li>
                                     <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
                                         Quản lý tài khoản
+                                    </a>
+                                </li> *@
+                                <li>
+                                    <a class="dropdown-item" href="/ShoppingCart/OrderList">
+                                        Lịch sử mua hàng
                                     </a>
                                 </li>
                                 <li>
@@ -335,7 +344,6 @@
 
 
 
-
 <footer>
     <div class="footer">
         <div class="wrap">
@@ -350,8 +358,8 @@
                 <div class="col_1_of_4 span_1_of_4">
                     <h4>Tại sao nên mua ở đây</h4>
                     <ul>
-                        <li><a href="/home/Abou">Về chúng tôi</a></li>
-                        <li><a href="contact.html">Dịch vụ khách hàng</a></li>
+                        <li><a href="/home/About">Về chúng tôi</a></li>
+                        <li><a href="home/contact">Dịch vụ khách hàng</a></li>
                         <li><a href="/home/privacy">Bảo mật</a></li>
                         <li><a href="/home/Contact">Bản đồ</a></li>
                     </ul>
@@ -384,11 +392,9 @@
                 </div>
             </div>
         </div>
-
-    </div>
-
     </div>
 </footer>
+
 <!-- Scripts -->
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

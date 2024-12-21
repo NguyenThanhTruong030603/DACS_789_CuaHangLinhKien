@@ -12,7 +12,15 @@ namespace BaiGiuaKy.Repositories
         {
             _context = context;
         }
-        
+
+        public async Task<List<Product>> GetByCategoryAsync(string category)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .Where(p => p.Category.Name == category)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
             // return await _context.Products.ToListAsync();

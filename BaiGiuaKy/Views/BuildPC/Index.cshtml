@@ -1,0 +1,152 @@
+﻿@model IEnumerable<BaiGiuaKy.Models.Product>
+@{
+    ViewBag.Title = "Xây dựng PC";
+    var selectedComponents = ViewBag.SelectedComponents as Dictionary<string, int> ?? new Dictionary<string, int>();
+
+    var componentDescriptions = new Dictionary<string, string>
+    {
+        { "CPU", "CPU - Bộ vi xử lý" },
+        { "MAINBOARD", "MAINBOARD - Bo mạch chủ" },
+        { "RAM", "RAM - Bộ nhớ trong" },
+        { "VGA", "VGA - Card màn hình" },
+        { "SSD", "SSD - Ổ cứng thể rắn" },
+        { "HDD", "HDD - Ổ cứng cơ" },
+        { "PSU", "PSU - Nguồn máy tính" },
+        { "CASE", "CASE - Vỏ máy tính" },
+        { "Tản nhiệt", "Tản nhiệt - Hệ thống làm mát" }
+    };
+
+    var totalPrice = Model.Where(p => selectedComponents.Values.Contains(p.Id)).Sum(p => p.Price);
+}
+
+<div class="build-pc-container py-5">
+    <h1 class="build-pc-title text-center mb-4">Xây dựng PC của bạn</h1>
+
+    <div class="build-pc-table-wrapper table-responsive">
+        <table class="table table-bordered table-hover build-pc-table">
+            <thead class="table-dark">
+                <tr class="text-center">
+                    <th>Thành phần</th>
+                    <th>Sản phẩm đã chọn</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var component in new[] { "CPU", "MAINBOARD", "RAM", "VGA", "SSD", "HDD", "PSU", "CASE", "Tản nhiệt" })
+                {
+                    <tr>
+                        <td class="align-middle text-center build-pc-component-name">
+                            <strong>@componentDescriptions[component]</strong>
+                        </td>
+                        <td class="text-center build-pc-selected-product">
+                            @if (selectedComponents.ContainsKey(component))
+                            {
+                                var productId = selectedComponents[component];
+                                var product = Model.FirstOrDefault(p => p.Id == productId);
+
+                                @if (product != null)
+                                {
+                                    <div class="build-pc-product-info d-flex flex-column align-items-center">
+                                        <img src="@product.ImageUrl" alt="@product.Name" class="build-pc-product-image img-thumbnail">
+                                        <p class="mt-2 mb-1 build-pc-product-name">@product.Name</p>
+                                        <span class="text-success fw-bold build-pc-product-price">@product.Price.ToString("#,##0") VND</span>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa chọn</span>
+                            }
+                        </td>
+                        <td class="text-center build-pc-actions">
+                            @if (selectedComponents.ContainsKey(component))
+                            {
+                                <form action="@Url.Action("RemoveComponent", "BuildPC")" method="post" style="display:inline;">
+                                    <input type="hidden" name="type" value="@component" />
+                                    <input type="hidden" name="productId" value="@selectedComponents[component]" />
+                                    <button type="submit" class="build-pc-remove-btn btn btn-danger btn-sm">Xóa</button>
+                                </form>
+                            }
+
+                            <a href="@Url.Action("SelectComponent", "BuildPC", new { type = component })" class="build-pc-select-btn btn btn-primary btn-sm">
+                                @if (selectedComponents.ContainsKey(component))
+                                {
+                                    <span>Thay đổi</span>
+                                }
+                                else
+                                {
+                                    <span>Chọn</span>
+                                }
+                            </a>
+                        </td>
+                    </tr>
+                }
+
+                <tr>
+                    <td colspan="2" class="text-end fw-bold">Tổng giá:</td>
+                    <td class="text-center text-success fw-bold">
+                        @totalPrice.ToString("#,##0") VND
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <form action="@Url.Action("AddSelectedProducts", "ShoppingCart")" method="post">
+            @foreach (var component in selectedComponents)
+            {
+                <input type="hidden" name="selectedProducts" value="@component.Value" />
+            }
+            <button type="submit" class="build-pc-add-to-cart-btn btn btn-success btn-lg">
+                <i class="fa fa-shopping-cart"></i> Thêm tất cả vào giỏ hàng
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<style>
+    /* Xây dựng PC - Giao diện */
+    .build-pc-container {
+        background-color: #f8f9fa;
+    }
+
+    .build-pc-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .build-pc-table th,
+    .build-pc-table td {
+        vertical-align: middle;
+    }
+
+    .build-pc-product-image {
+        height: 120px;
+        width: auto;
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .build-pc-product-image:hover {
+            transform: scale(1.1);
+        }
+
+    .build-pc-remove-btn,
+    .build-pc-select-btn,
+    .build-pc-add-to-cart-btn {
+        border-radius: 20px;
+    }
+
+        .build-pc-remove-btn:hover,
+        .build-pc-select-btn:hover,
+        .build-pc-add-to-cart-btn:hover {
+            opacity: 0.9;
+        }
+
+    .build-pc-add-to-cart-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1.25rem;
+    }
+</style>
